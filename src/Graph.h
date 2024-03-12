@@ -25,7 +25,9 @@ public:
                 if(line[0] == 'c'){
                     continue;
                 }
-                line.pop_back();
+                if(line.back() == '\n' || line.back() == '\r') {
+                    line.pop_back();
+                }
 
                 if(is_p_line){
                     assert(line[0] == 'p');
@@ -64,6 +66,33 @@ public:
         } else{
             std::cout << "Could not open file " << file_path << " !" << std::endl;
         }
+    }
+
+    uint32_t determine_n_cuts(std::vector<uint32_t> &solution){
+        uint32_t n_cuts = 0;
+        for(size_t i = 0; i < n_B; ++i){
+            for(size_t j = i+1; j < n_B; ++j){
+                uint32_t b1 = solution[i];
+                uint32_t b2 = solution[j];
+
+                uint32_t b1_pos = i;
+                uint32_t b2_pos = j;
+
+                // loop through the edges
+                for(size_t k = 0; k < adj_list[b1].size(); ++k){
+                    for(size_t l = 0; l < adj_list[b2].size(); ++l){
+                        uint32_t a1_pos = adj_list[b1][k];
+                        uint32_t a2_pos = adj_list[b2][l];
+
+                        bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
+                        bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
+                        bool cut = cut1 || cut2;
+                        n_cuts += cut;
+                    }
+                }
+            }
+        }
+        return n_cuts;
     }
 };
 

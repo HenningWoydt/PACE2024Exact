@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <iostream>
+#include <cstdint>
+#include <fstream>
 
 template <typename T>
 void print(const std::vector<T> &vec){
@@ -30,6 +32,8 @@ bool no_duplicates(const std::vector<T> &vec){
     return true;
 }
 
+bool no_duplicates(const std::vector<std::vector<uint32_t>> &vec);
+
 template <typename T>
 uint64_t fac(T n){
     uint64_t prod = 1;
@@ -38,5 +42,9 @@ uint64_t fac(T n){
     }
     return prod;
 }
+
+std::vector<uint32_t> read_solution(std::string &file_path);
+
+void write_solution(std::vector<uint32_t> &solution, std::string &file_path);
 
 #endif //PACE2024EXACT_MISC_H
