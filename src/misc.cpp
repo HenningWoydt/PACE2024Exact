@@ -1,10 +1,10 @@
 #include "misc.h"
 
-bool no_duplicates(const std::vector<std::vector<uint32_t>> &vec) {
+bool no_duplicates(const std::vector<std::vector<int>> &vec) {
     for (size_t i = 0; i < vec.size(); ++i) {
         for (size_t j = i + 1; j < vec.size(); ++j) {
-            std::vector<uint32_t> vec1 = vec[i];
-            std::vector<uint32_t> vec2 = vec[j];
+            std::vector<int> vec1 = vec[i];
+            std::vector<int> vec2 = vec[j];
 
             bool is_same = true;
             for (size_t k = 0; k < vec1.size(); ++k) {
@@ -22,8 +22,8 @@ bool no_duplicates(const std::vector<std::vector<uint32_t>> &vec) {
     return true;
 }
 
-std::vector<uint32_t> read_solution(std::string &file_path, uint32_t shift) {
-    std::vector<uint32_t> vec;
+std::vector<int> read_solution(std::string &file_path, int shift) {
+    std::vector<int> vec;
 
     std::ifstream file(file_path);
     if (file.is_open()) {
@@ -31,7 +31,7 @@ std::vector<uint32_t> read_solution(std::string &file_path, uint32_t shift) {
             if (line.back() == '\n' || line.back() == '\r') {
                 line.pop_back();
             }
-            uint32_t vertex = std::stoi(line);
+            int vertex = std::stoi(line);
             vec.push_back(vertex - shift);
         }
     } else {
@@ -41,7 +41,7 @@ std::vector<uint32_t> read_solution(std::string &file_path, uint32_t shift) {
     return vec;
 }
 
-void write_solution(std::vector<uint32_t> &solution, std::string &file_path) {
+void write_solution(std::vector<int> &solution, std::string &file_path) {
     std::ofstream file(file_path);
 
     if (file.is_open()) {
@@ -52,4 +52,9 @@ void write_solution(std::vector<uint32_t> &solution, std::string &file_path) {
     } else {
         std::cout << "Could not open file " << file_path << " !" << std::endl;
     }
+}
+
+double get_elapsed_seconds(std::chrono::steady_clock::time_point sp,
+                           std::chrono::steady_clock::time_point ep) {
+    return (double) std::chrono::duration_cast<std::chrono::nanoseconds>(ep - sp).count() / 1e9;
 }

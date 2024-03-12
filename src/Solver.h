@@ -9,6 +9,12 @@
 #include "Graph.h"
 #include "misc.h"
 
+
+struct Element {
+    int e; // the element
+    int gain; // gain in the number of cuts
+};
+
 /**
  * Solver for the one-sided crossing minimization problem (OCM).
  */
@@ -16,12 +22,18 @@ class Solver {
 private:
     const Graph &graph;
 
-    std::vector<uint32_t> permutation; // current linear order
-    std::vector<bool> is_used; // O(1) access if a vertex is already used
-    size_t curr_size;
+    std::vector<int> permutation; // current linear order
+    std::vector<int> is_used; // O(1) access to check if a vertex is used
 
-    std::vector<uint32_t> solution;
-    uint32_t solution_n_cuts;
+
+    std::vector<int> counter; // used in iterative search
+    std::vector<std::vector<Element>> element_order;
+
+    // holds the number of cuts on each level
+    std::vector<int> depth_n_cuts;
+
+    std::vector<int> solution; // holds the best found permutation
+    int solution_n_cuts;
 
 public:
     /**
@@ -30,19 +42,28 @@ public:
      * @param g The graph to optimize.
      */
     explicit Solver(Graph &g) : graph(g) {
-        permutation.resize(graph.n_B);
-        is_used.resize(graph.n_B, false);
-        curr_size = 0;
+        permutation.resize(graph.n_B); // reserve space
+        is_used.resize(graph.n_B, false); // no vertex is used
 
-        solution.resize(graph.n_B);
-        solution_n_cuts = std::numeric_limits<uint32_t>::max();
+        counter.resize(graph.n_B, -1); // all counter are -1
+        element_order.resize(graph.n_B, {});
+        for(size_t i = 0; i < (size_t) graph.n_B; ++i){
+            element_order[i].resize(graph.n_B - i);
+        }
+
+        depth_n_cuts.resize(graph.n_B);
+
+        solution.resize(graph.n_B); // reserve space
+        solution_n_cuts = std::numeric_limits<int>::max();
     }
 
     /**
      * Determines the permutation, with the least number of cuts.
      */
     void solve() {
-        recursive_solve();
+        initial_greedy();
+
+        iterative_search();
     }
 
     /**
@@ -51,8 +72,8 @@ public:
      *
      * @return Permutation of B.
      */
-    [[nodiscard]] std::vector<uint32_t> get_solution() const {
-        std::vector<uint32_t> v(solution);
+    [[nodiscard]] std::vector<int> get_solution() const {
+        std::vector<int> v(solution);
         return v;
     }
 
@@ -62,9 +83,9 @@ public:
      *
      * @return Permutation of B.
      */
-    [[nodiscard]] std::vector<uint32_t> get_shifted_solution() const {
-        std::vector<uint32_t> v(solution);
-        for(auto &x : v){
+    [[nodiscard]] std::vector<int> get_shifted_solution() const {
+        std::vector<int> v(solution);
+        for (auto &x: v) {
             x += graph.n_A + 1;
         }
         return v;
@@ -76,21 +97,21 @@ private:
      *
      * @return Number of cuts.
      */
-    uint32_t count_cuts() {
-        uint32_t n_cuts = 0;
-        for (size_t i = 0; i < curr_size; ++i) {
-            for (size_t j = i + 1; j < curr_size; ++j) {
-                uint32_t b1 = permutation[i];
-                uint32_t b2 = permutation[j];
+    int count_cuts(std::vector<int> &perm, int size) {
+        int n_cuts = 0;
+        for (int i = 0; i < size; ++i) {
+            for (int j = i + 1; j < size; ++j) {
+                int b1 = perm[i];
+                int b2 = perm[j];
 
-                uint32_t b1_pos = i;
-                uint32_t b2_pos = j;
+                int b1_pos = i;
+                int b2_pos = j;
 
                 // loop through the edges
                 for (size_t k = 0; k < graph.adj_list[b1].size(); ++k) {
                     for (size_t l = 0; l < graph.adj_list[b2].size(); ++l) {
-                        uint32_t a1_pos = graph.adj_list[b1][k];
-                        uint32_t a2_pos = graph.adj_list[b2][l];
+                        int a1_pos = graph.adj_list[b1][k];
+                        int a2_pos = graph.adj_list[b2][l];
 
                         bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
                         bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
@@ -104,30 +125,110 @@ private:
     }
 
     /**
-     * Recursively searches the permutation tree.
+     * Computes an initial greedy solution.
      */
-    void recursive_solve() {
-        if (curr_size == graph.n_B) {
-            // we have a permutation, check the number of cuts
-            uint32_t n_cuts = count_cuts();
-            if (n_cuts < solution_n_cuts) {
-                std::copy(permutation.begin(), permutation.end(), solution.begin());
-                solution_n_cuts = n_cuts;
+    void initial_greedy(){
+        int size = graph.n_B;
+        std::iota(permutation.begin(), permutation.end(), 0);
+        int n_cuts = count_cuts(permutation, size);
+
+        std::copy(permutation.begin(), permutation.end(), solution.begin());
+        solution_n_cuts = n_cuts;
+
+        size_t n_swaps = size * size;
+        for(size_t i = 0; i < n_swaps; ++i){
+
+            size_t rnd_idx1 = random() % size;
+            size_t rnd_idx2 = random() % size;
+
+            int v1 = permutation[rnd_idx1];
+            int v2 = permutation[rnd_idx2];
+
+            permutation[rnd_idx1] = v2;
+            permutation[rnd_idx2] = v1;
+
+            int new_n_cuts = count_cuts(permutation, size);
+            if(new_n_cuts < n_cuts){
+                n_cuts = new_n_cuts;
+            } else{
+                permutation[rnd_idx1] = v1;
+                permutation[rnd_idx2] = v2;
             }
-            return;
         }
 
-        for (uint32_t i = 0; i < graph.n_B; ++i) {
-            if (!is_used[i]) {
-                // vertex i is not used, so append it to the permutation
-                permutation[curr_size] = i;
-                is_used[i] = true;
-                curr_size += 1;
+        std::copy(permutation.begin(), permutation.end(), solution.begin());
+        solution_n_cuts = n_cuts;
+    }
 
-                recursive_solve();
+#define TREE_UP 0
+#define TREE_STAY 1
 
-                is_used[i] = false;
-                curr_size -= 1;
+    /**
+     * Iteratively searches the permutation tree.
+     */
+    void iterative_search() {
+        int depth = 0;
+        int tree_movement = TREE_STAY;
+
+        while (depth >= 0) {
+
+            if (tree_movement == TREE_UP) {
+                // go up
+                depth -= 1;
+                tree_movement = TREE_STAY;
+                continue;
+            } else {
+                // release the current element and move further
+                if (counter[depth] >= 0) {
+                    is_used[counter[depth]] = false;
+                }
+                counter[depth] += 1;
+
+                // look for valid element
+                while (counter[depth] != graph.n_B && is_used[counter[depth]]) {
+                    counter[depth] += 1;
+                }
+
+                // check if not enough elements remain
+                if (counter[depth] == graph.n_B) {
+                    tree_movement = TREE_UP;
+                    continue;
+                }
+
+                // valid element found
+                permutation[depth] = counter[depth];
+                is_used[counter[depth]] = true;
+
+                // check if we arrived at the bottom
+                if (depth + 1 == graph.n_B) {
+                    int n_cuts = count_cuts(permutation, depth + 1);
+                    if (n_cuts < solution_n_cuts) {
+                        std::copy(permutation.begin(), permutation.end(), solution.begin());
+                        solution_n_cuts = n_cuts;
+                    }
+
+                    // release the element, because we go up
+                    is_used[counter[depth]] = false;
+                    tree_movement = TREE_UP;
+                    continue;
+                }
+
+                // check if we can abort early
+                int current_n_cuts = count_cuts(permutation, depth + 1);
+                if (current_n_cuts >= solution_n_cuts) {
+                    // release the element, because we go up
+                    is_used[counter[depth]] = false;
+                    tree_movement = TREE_UP;
+                    continue;
+                }
+                depth_n_cuts[depth] = current_n_cuts;
+
+                // move down and reset counter
+                depth += 1;
+                counter[depth] = -1;
+
+                tree_movement = TREE_STAY;
+                continue;
             }
         }
     }

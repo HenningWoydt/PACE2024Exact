@@ -16,18 +16,18 @@
  */
 class Solver_BF {
 private:
-    std::vector<uint32_t> solution;
-    uint32_t solution_n_cuts;
-
     const Graph &graph;
 
-    std::vector<uint32_t> permutation; // current linear order
+    std::vector<int> permutation; // current linear order
     std::vector<bool> is_used; // O(1) access if a vertex is already used
-    size_t curr_size;
+    int curr_size;
+
+    std::vector<int> solution;
+    int solution_n_cuts;
 
     // debug vars
 #if BF_DEBUG
-    std::vector<std::vector<uint32_t>> all_permutations;
+    std::vector<std::vector<int>> all_permutations;
 #endif
 
 public:
@@ -43,7 +43,7 @@ public:
         curr_size = 0;
 
         solution.resize(graph.n_B);
-        solution_n_cuts = std::numeric_limits<uint32_t>::max();
+        solution_n_cuts = std::numeric_limits<int>::max();
     }
 
     /**
@@ -89,8 +89,8 @@ public:
      *
      * @return Permutation of B.
      */
-    [[nodiscard]] std::vector<uint32_t> get_solution() const {
-        std::vector<uint32_t> v(solution);
+    [[nodiscard]] std::vector<int> get_solution() const {
+        std::vector<int> v(solution);
         return v;
     }
 
@@ -100,9 +100,9 @@ public:
      *
      * @return Permutation of B.
      */
-    [[nodiscard]] std::vector<uint32_t> get_shifted_solution() const {
-        std::vector<uint32_t> v(solution);
-        for(auto &x : v){
+    [[nodiscard]] std::vector<int> get_shifted_solution() const {
+        std::vector<int> v(solution);
+        for (auto &x: v) {
             x += graph.n_A + 1;
         }
         return v;
@@ -115,21 +115,21 @@ private:
      *
      * @return Number of cuts.
      */
-    uint32_t count_cuts() {
-        uint32_t n_cuts = 0;
-        for (size_t i = 0; i < curr_size; ++i) {
-            for (size_t j = i + 1; j < curr_size; ++j) {
-                uint32_t b1 = permutation[i];
-                uint32_t b2 = permutation[j];
+    int count_cuts() {
+        int n_cuts = 0;
+        for (int i = 0; i < curr_size; ++i) {
+            for (int j = i + 1; j < curr_size; ++j) {
+                int b1 = permutation[i];
+                int b2 = permutation[j];
 
-                uint32_t b1_pos = i;
-                uint32_t b2_pos = j;
+                int b1_pos = i;
+                int b2_pos = j;
 
                 // loop through the edges
                 for (size_t k = 0; k < graph.adj_list[b1].size(); ++k) {
                     for (size_t l = 0; l < graph.adj_list[b2].size(); ++l) {
-                        uint32_t a1_pos = graph.adj_list[b1][k];
-                        uint32_t a2_pos = graph.adj_list[b2][l];
+                        int a1_pos = graph.adj_list[b1][k];
+                        int a2_pos = graph.adj_list[b2][l];
 
                         bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
                         bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
@@ -152,7 +152,7 @@ private:
             all_permutations.push_back(permutation);
 #endif
             // we have a permutation, check the number of cuts
-            uint32_t n_cuts = count_cuts();
+            int n_cuts = count_cuts();
             if (n_cuts < solution_n_cuts) {
                 std::copy(permutation.begin(), permutation.end(), solution.begin());
                 solution_n_cuts = n_cuts;
@@ -160,7 +160,7 @@ private:
             return;
         }
 
-        for (uint32_t i = 0; i < graph.n_B; ++i) {
+        for (int i = 0; i < graph.n_B; ++i) {
             if (!is_used[i]) {
                 // vertex i is not used, so append it to the permutation
                 permutation[curr_size] = i;

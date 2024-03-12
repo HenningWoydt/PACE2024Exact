@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdint>
 #include <fstream>
+#include <chrono>
 
 /**
  * Prints the content of a vector in a Numpy-style way. The '<<' operator must
@@ -25,6 +26,28 @@ void print(const std::vector<T> &vec) {
         std::cout << vec[i] << ", ";
     }
     std::cout << vec.back() << "]" << std::endl;
+}
+
+/**
+ * Prints the content of a vector in a Numpy-style way. The '<<' operator must
+ * be defined for T.
+ *
+ * @tparam T Type of the vector.
+ * @param vec The vector.
+ * @param size The size of the vector.
+ */
+template<typename T>
+void print(const std::vector<T> &vec, size_t size) {
+    if (size == 0) {
+        std::cout << "[]" << std::endl;
+        return;
+    }
+
+    std::cout << "[";
+    for (size_t i = 0; i < size - 1; ++i) {
+        std::cout << vec[i] << ", ";
+    }
+    std::cout << vec[size - 1] << "]" << std::endl;
 }
 
 /**
@@ -54,7 +77,7 @@ bool no_duplicates(const std::vector<T> &vec) {
  * @param vec Vector of vectors.
  * @return True if no duplicates are present, false else.
  */
-bool no_duplicates(const std::vector<std::vector<uint32_t>> &vec);
+bool no_duplicates(const std::vector<std::vector<int>> &vec);
 
 /**
  * Computes the factorial of a number.
@@ -64,9 +87,9 @@ bool no_duplicates(const std::vector<std::vector<uint32_t>> &vec);
  * @return n!
  */
 template<typename T>
-uint64_t fac(T n) {
-    uint64_t prod = 1;
-    for (uint64_t i = 1; i <= n; ++i) {
+int fac(T n) {
+    int prod = 1;
+    for (int i = 1; i <= n; ++i) {
         prod *= i;
     }
     return prod;
@@ -79,7 +102,7 @@ uint64_t fac(T n) {
  * @param shift Shifts the read numbers to the left (x -= shift).
  * @return Vector containing the solution.
  */
-std::vector<uint32_t> read_solution(std::string &file_path, uint32_t shift);
+std::vector<int> read_solution(std::string &file_path, int shift);
 
 /**
  * Write a solution vector to a file.
@@ -87,6 +110,16 @@ std::vector<uint32_t> read_solution(std::string &file_path, uint32_t shift);
  * @param solution Vector holding the solution.
  * @param file_path Path to the file.
  */
-void write_solution(std::vector<uint32_t> &solution, std::string &file_path);
+void write_solution(std::vector<int> &solution, std::string &file_path);
+
+/**
+ * Returns the difference between two time points in seconds.
+ *
+ * @param sp Start time point.
+ * @param ep End time point.
+ * @return Difference in seconds.
+ */
+double get_elapsed_seconds(std::chrono::steady_clock::time_point sp,
+                           std::chrono::steady_clock::time_point ep);
 
 #endif //PACE2024EXACT_MISC_H

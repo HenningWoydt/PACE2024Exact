@@ -14,10 +14,10 @@
  */
 class Graph {
 public:
-    uint32_t n_A = 0;
-    uint32_t n_B = 0;
+    int n_A = 0;
+    int n_B = 0;
 
-    std::vector<std::vector<uint32_t>> adj_list;
+    std::vector<std::vector<int>> adj_list;
 
     /**
      * Reads a graph from a file.
@@ -64,7 +64,7 @@ public:
                     is_p_line = false;
                 } else {
                     std::stringstream ss(line);
-                    uint32_t a, b;
+                    int a, b;
                     ss >> a >> b;
                     b -= (n_A + 1);
                     adj_list[b].push_back(a - 1);
@@ -83,21 +83,21 @@ public:
      * @param permutation The permutation.
      * @return Number of cuts.
      */
-    uint32_t determine_n_cuts(std::vector<uint32_t> &permutation) {
-        uint32_t n_cuts = 0;
-        for (size_t i = 0; i < n_B; ++i) {
-            for (size_t j = i + 1; j < n_B; ++j) {
-                uint32_t b1 = permutation[i];
-                uint32_t b2 = permutation[j];
+    int determine_n_cuts(std::vector<int> &permutation) {
+        int n_cuts = 0;
+        for (int i = 0; i < n_B; ++i) {
+            for (int j = i + 1; j < n_B; ++j) {
+                int b1 = permutation[i];
+                int b2 = permutation[j];
 
-                uint32_t b1_pos = i;
-                uint32_t b2_pos = j;
+                int b1_pos = i;
+                int b2_pos = j;
 
                 // loop through the edges
                 for (size_t k = 0; k < adj_list[b1].size(); ++k) {
                     for (size_t l = 0; l < adj_list[b2].size(); ++l) {
-                        uint32_t a1_pos = adj_list[b1][k];
-                        uint32_t a2_pos = adj_list[b2][l];
+                        int a1_pos = adj_list[b1][k];
+                        int a2_pos = adj_list[b2][l];
 
                         bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
                         bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
