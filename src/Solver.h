@@ -8,6 +8,7 @@
 
 #include "Graph.h"
 #include "misc.h"
+#include "MinCrossMatrix.h"
 
 
 struct Element {
@@ -25,12 +26,14 @@ private:
     std::vector<int> permutation; // current linear order
     std::vector<int> is_used; // O(1) access to check if a vertex is used
 
+    // holds the number of cuts on each level
+    std::vector<int> depth_n_cuts;
 
     std::vector<int> counter; // used in iterative search
     std::vector<std::vector<Element>> element_order;
 
-    // holds the number of cuts on each level
-    std::vector<int> depth_n_cuts;
+    MinCrossMatrix min_cross_matrix;
+
 
     std::vector<int> solution; // holds the best found permutation
     int solution_n_cuts;
@@ -45,13 +48,15 @@ public:
         permutation.resize(graph.n_B); // reserve space
         is_used.resize(graph.n_B, false); // no vertex is used
 
+        depth_n_cuts.resize(graph.n_B);
+
         counter.resize(graph.n_B, -1); // all counter are -1
         element_order.resize(graph.n_B, {});
         for(size_t i = 0; i < (size_t) graph.n_B; ++i){
             element_order[i].resize(graph.n_B - i);
         }
 
-        depth_n_cuts.resize(graph.n_B);
+        min_cross_matrix = MinCrossMatrix(graph.n_B);
 
         solution.resize(graph.n_B); // reserve space
         solution_n_cuts = std::numeric_limits<int>::max();

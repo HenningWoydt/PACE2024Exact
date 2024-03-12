@@ -22,7 +22,8 @@ add_executable(PACE2024Exact
         src/misc.h
         src/misc.cpp
         src/Solver.h
-        src/GraphGenerator.h)
+        src/GraphGenerator.h
+        src/MinCrossMatrix.h)
 
 add_executable(PACE2024Exact_test
         src/Graph.h
@@ -33,7 +34,8 @@ add_executable(PACE2024Exact_test
         tests/medium_test.cpp
         tests/own_tiny_test.cpp
         tests/misc_test.h
-        tests/misc_test.cpp)
+        tests/misc_test.cpp
+        src/MinCrossMatrix.h)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)
