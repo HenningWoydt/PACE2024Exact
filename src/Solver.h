@@ -9,9 +9,12 @@
 #include "Graph.h"
 #include "misc.h"
 
+/**
+ * Solver for the one-sided crossing minimization problem (OCM).
+ */
 class Solver {
-public:
-    Graph &graph;
+private:
+    const Graph &graph;
 
     std::vector<uint32_t> permutation; // current linear order
     std::vector<bool> is_used; // O(1) access if a vertex is already used
@@ -20,19 +23,63 @@ public:
     std::vector<uint32_t> solution;
     uint32_t solution_n_cuts;
 
+public:
+    /**
+     * Default constructor.
+     *
+     * @param g The graph to optimize.
+     */
     explicit Solver(Graph &g) : graph(g) {
-            permutation.resize(graph.n_B);
-            is_used.resize(graph.n_B, false);
-            curr_size = 0;
+        permutation.resize(graph.n_B);
+        is_used.resize(graph.n_B, false);
+        curr_size = 0;
 
-            solution.resize(graph.n_B);
-            solution_n_cuts = std::numeric_limits<uint32_t>::max();
+        solution.resize(graph.n_B);
+        solution_n_cuts = std::numeric_limits<uint32_t>::max();
     }
 
-    uint32_t count_cuts(){
+    /**
+     * Determines the permutation, with the least number of cuts.
+     */
+    void solve() {
+        recursive_solve();
+    }
+
+    /**
+     * Returns the permutation vector. All entries are in the range
+     * [0, ..., n_B - 1].
+     *
+     * @return Permutation of B.
+     */
+    [[nodiscard]] std::vector<uint32_t> get_solution() const {
+        std::vector<uint32_t> v(solution);
+        return v;
+    }
+
+    /**
+     * Returns the permutation vector. All entries are in the range
+     * [n_A + 1, ..., n_A + n_B].
+     *
+     * @return Permutation of B.
+     */
+    [[nodiscard]] std::vector<uint32_t> get_shifted_solution() const {
+        std::vector<uint32_t> v(solution);
+        for(auto &x : v){
+            x += graph.n_A + 1;
+        }
+        return v;
+    }
+
+private:
+    /**
+     * Counts the number of cuts, based on the current permutation.
+     *
+     * @return Number of cuts.
+     */
+    uint32_t count_cuts() {
         uint32_t n_cuts = 0;
-        for(size_t i = 0; i < curr_size; ++i){
-            for(size_t j = i+1; j < curr_size; ++j){
+        for (size_t i = 0; i < curr_size; ++i) {
+            for (size_t j = i + 1; j < curr_size; ++j) {
                 uint32_t b1 = permutation[i];
                 uint32_t b2 = permutation[j];
 
@@ -40,8 +87,8 @@ public:
                 uint32_t b2_pos = j;
 
                 // loop through the edges
-                for(size_t k = 0; k < graph.adj_list[b1].size(); ++k){
-                    for(size_t l = 0; l < graph.adj_list[b2].size(); ++l){
+                for (size_t k = 0; k < graph.adj_list[b1].size(); ++k) {
+                    for (size_t l = 0; l < graph.adj_list[b2].size(); ++l) {
                         uint32_t a1_pos = graph.adj_list[b1][k];
                         uint32_t a2_pos = graph.adj_list[b2][l];
 
@@ -56,20 +103,14 @@ public:
         return n_cuts;
     }
 
-    void solve() {
-        recursive_solve();
-
-        // shift solution vector to original space
-        for(unsigned int & i : solution){
-            i += graph.n_A + 1;
-        }
-    }
-
+    /**
+     * Recursively searches the permutation tree.
+     */
     void recursive_solve() {
         if (curr_size == graph.n_B) {
             // we have a permutation, check the number of cuts
             uint32_t n_cuts = count_cuts();
-            if(n_cuts < solution_n_cuts){
+            if (n_cuts < solution_n_cuts) {
                 std::copy(permutation.begin(), permutation.end(), solution.begin());
                 solution_n_cuts = n_cuts;
             }

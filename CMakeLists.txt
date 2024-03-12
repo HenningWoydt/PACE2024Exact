@@ -17,21 +17,15 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -fopenmp -std=c++20 -Wall -Wextra -pedantic")
 
 add_executable(PACE2024Exact
         main.cpp
-        src/Graph.cpp
         src/Graph.h
-        src/Solver_BF.cpp
         src/Solver_BF.h
         src/misc.h
         src/misc.cpp
-        src/Solver.cpp
         src/Solver.h
-        src/GraphGenerator.cpp
         src/GraphGenerator.h)
 
 add_executable(PACE2024Exact_test
-        src/Graph.cpp
         src/Graph.h
-        src/Solver_BF.cpp
         src/Solver_BF.h
         src/misc.h
         src/misc.cpp

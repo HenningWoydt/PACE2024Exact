@@ -8,6 +8,7 @@
 
 #include "../src/Graph.h"
 #include "../src/Solver_BF.h"
+#include "../src/Solver.h"
 #include "../src/misc.h"
 
 void compare_bf(std::string &graph_filepath, std::string &solution_filepath);

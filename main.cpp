@@ -5,7 +5,7 @@
 #include "src/Solver_BF.h"
 #include "src/GraphGenerator.h"
 
-void generate_dataset(){
+void generate_tiny_dataset(){
     for(size_t i = 1; i < 11; ++i){
         for(size_t j = 1; j < 11; ++j){
             std::string directory = "../data/test/own/tiny/" + std::to_string(i) + "_" + std::to_string(j) + "/";
@@ -29,8 +29,9 @@ void generate_dataset(){
                 Graph graph(file_path);
                 Solver_BF solver_bf(graph);
                 solver_bf.solve();
+                std::vector<uint32_t> solution = solver_bf.get_shifted_solution();
 
-                write_solution(solver_bf.solution, file_path_sol);
+                write_solution(solution, file_path_sol);
             }
         }
     }
@@ -42,10 +43,11 @@ int main() {
 
     Solver_BF solver_bf(g);
     solver_bf.solve();
+    std::vector<uint32_t> solution = solver_bf.get_shifted_solution();
 
-    print(solver_bf.solution);
+    print(solution);
 
-    generate_dataset();
+    generate_tiny_dataset();
 
     return 0;
 }
