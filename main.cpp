@@ -16,8 +16,8 @@ void generate_tiny_dataset(){
                 continue;
             }
 
-            std::filesystem::create_directory(directory);
-            std::filesystem::create_directory(directory_sol);
+            std::filesystem::create_directories(directory);
+            std::filesystem::create_directories(directory_sol);
 
             for(size_t k = 0; k < 100; ++k){
                 std::string file_path = directory + "" + std::to_string(k) + ".gr";
@@ -39,6 +39,8 @@ void generate_tiny_dataset(){
 }
 
 int main() {
+    // generate_tiny_dataset();
+
     // std::string file_path = "../data/test/tiny_test_set/star_6.gr";
     std::string file_path = "../data/test/medium_test_set/1.gr";
 
