@@ -218,6 +218,7 @@ private:
         while (depth >= 0) {
 
             if(depth > 0) {
+                // TODO: Error here somewhere
                 int curr_cuts = count_cuts(m_permutation, depth);
                 int min_remaining_cuts = 0; //get_minCutsRemaining(depth);
                 if (curr_cuts + min_remaining_cuts >= m_solution_n_cuts) {
