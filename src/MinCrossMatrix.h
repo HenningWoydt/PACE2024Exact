@@ -8,8 +8,8 @@
  */
 class MinCrossMatrix {
 private:
-    int n = 0;
-    std::vector<int> matrix;
+    int m_n = 0;
+    std::vector<int> m_matrix;
 
 public:
 
@@ -21,11 +21,11 @@ public:
     /**
      * Default constructor.
      *
-     * @param n Size of the matrix.
+     * @param n Size of the m_matrix.
      */
-    explicit MinCrossMatrix(int n){
-        this->n = n;
-        matrix.resize(n*n);
+    explicit MinCrossMatrix(int n) {
+        m_n = n;
+        m_matrix.resize(m_n * m_n, 0);
     }
 
     /**
@@ -35,11 +35,11 @@ public:
      * @param idx2 Index of second element.
      * @param val The value to insert.
      */
-    void set_entry(int idx1, int idx2, int val){
+    void set_entry(int idx1, int idx2, int val) {
         int i1 = std::max(idx1, idx2);
         int i2 = std::min(idx1, idx2);
 
-        matrix[i1 *n + i2] = val;
+        m_matrix[i1 * m_n + i2] = val;
     }
 
     /**
@@ -49,11 +49,28 @@ public:
      * @param idx2 Index of the second element.
      * @return The value at the index.
      */
-    int get_entry(int idx1, int idx2){
+    int get_entry(int idx1, int idx2) {
         int i1 = std::max(idx1, idx2);
         int i2 = std::min(idx1, idx2);
 
-        return matrix[i1 *n + i2];
+        return m_matrix[i1 * m_n + i2];
+    }
+
+    /**
+     * Prints the matrix to the standard output.
+     */
+    void print() {
+        for (int i = 0; i < m_n; ++i) {
+            if (m_n == 0) {
+                std::cout << "[]" << std::endl;
+                continue;
+            }
+            std::cout << "[";
+            for (int j = 0; j < m_n - 1; ++j) {
+                std::cout << m_matrix[i * m_n + j] << " ";
+            }
+            std::cout << m_matrix[i * m_n + m_n - 1] << "]" << std::endl;
+        }
     }
 };
 

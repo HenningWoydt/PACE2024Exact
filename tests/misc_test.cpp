@@ -1,37 +1,48 @@
 #include "misc_test.h"
 
-void compare_bf(std::string &graph_filepath, std::string &solution_filepath) {
-    Graph g(graph_filepath);
+void compare_bf(std::string &g_path, std::string &sol_path) {
+    std::vector<int> solver_bf_solution;
+    std::vector<int> solver_solution;
+    std::vector<int> real_solution;
 
-    Solver_BF solver_bf(g);
-    solver_bf.solve();
+    int solver_n_cuts;
+    int solver_bf_n_cuts;
+    int real_n_cuts;
 
-    Solver solver(g);
-    solver.solve();
+    {
+        Graph g(g_path);
+        Solver_BF solver_bf(g);
+        solver_bf.solve();
+        solver_bf_solution = solver_bf.get_solution();
+        solver_bf_n_cuts = g.determine_n_cuts(solver_bf_solution);
+    }
+    {
+        Graph g(g_path);
+        Solver solver(g);
+        solver.solve();
+        solver_solution = solver.get_solution();
+        solver_n_cuts = g.determine_n_cuts(solver_solution);
+    }
+    {
+        Graph g(g_path);
+        real_solution = read_solution(sol_path, g.m_n_A + 1);
+        real_n_cuts = g.determine_n_cuts(real_solution);
+    }
 
-    std::vector<int> bf_solution = solver_bf.get_solution();
-    std::vector<int> solution = solver.get_solution();
-    std::vector<int> real_solution = read_solution(solution_filepath, g.n_A + 1);
-
-    // determine the number of cuts for all solutions
-    int n_cuts = g.determine_n_cuts(solution);
-    int bf_n_cuts = g.determine_n_cuts(bf_solution);
-    int real_n_cuts = g.determine_n_cuts(real_solution);
-
-    EXPECT_EQ(n_cuts, bf_n_cuts);
-    EXPECT_EQ(n_cuts, real_n_cuts);
-    EXPECT_EQ(bf_n_cuts, real_n_cuts);
+    EXPECT_EQ(solver_n_cuts, solver_bf_n_cuts) << g_path << " " << sol_path << " " << to_string(solver_solution) << " " << to_string(solver_bf_solution);
+    EXPECT_EQ(solver_n_cuts, real_n_cuts) << g_path << " " << sol_path;
+    EXPECT_EQ(solver_bf_n_cuts, real_n_cuts) << g_path << " " << sol_path;
 }
 
-void compare(std::string &graph_filepath, std::string &solution_filepath) {
+void compare(std::string &g_path, std::string &sol_path) {
     return;
-    Graph g(graph_filepath);
+    Graph g(g_path);
 
     Solver solver(g);
     solver.solve();
 
     std::vector<int> solution = solver.get_solution();
-    std::vector<int> real_solution = read_solution(solution_filepath, g.n_A + 1);
+    std::vector<int> real_solution = read_solution(sol_path, g.m_n_A + 1);
 
     // determine the number of cuts for all solutions
     int n_cuts = g.determine_n_cuts(solution);

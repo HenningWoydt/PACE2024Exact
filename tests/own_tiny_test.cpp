@@ -54,7 +54,7 @@ TEST(OwnTiny, T5) {
         for (size_t j = 0; j < 100; ++j) {
             std::string graph_filepath = "../data/test/own/tiny/5_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string solution_file_path = "../data/test/own/tiny/5_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
-
+            std::cout << graph_filepath << " " << solution_file_path << std::endl;
             compare_bf(graph_filepath, solution_file_path);
         }
     }

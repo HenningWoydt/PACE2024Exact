@@ -35,33 +35,33 @@ public:
     /**
      * Default constructor.
      *
-     * @param g The graph to optimize.
+     * @param g The m_graph to optimize.
      */
     explicit Solver_BF(Graph &g) : graph(g) {
-        permutation.resize(graph.n_B);
-        is_used.resize(graph.n_B, false);
+        permutation.resize(graph.m_n_B);
+        is_used.resize(graph.m_n_B, false);
         curr_size = 0;
 
-        solution.resize(graph.n_B);
+        solution.resize(graph.m_n_B);
         solution_n_cuts = std::numeric_limits<int>::max();
     }
 
     /**
-     * Determines the permutation, with the least number of cuts.
+     * Determines the m_permutation, with the least number of cuts.
      */
     void solve() {
         recursive_solve();
 
 #if BF_DEBUG
         // check that n! permutations have been found
-        if (all_permutations.size() != fac(graph.n_B)) {
-            std::cout << "WARNING: Not all permutations have been found! Only " << all_permutations.size() << " of " << fac(graph.n_B) << " have been found!" << std::endl;
+        if (all_permutations.size() != fac(m_graph.m_n_B)) {
+            std::cout << "WARNING: Not all permutations have been found! Only " << all_permutations.size() << " of " << fac(m_graph.m_n_B) << " have been found!" << std::endl;
         }
 
-        // check that each entry has exactly n_B entries
+        // check that each entry has exactly m_n_B entries
         for (auto &vec: all_permutations) {
-            if (vec.size() != graph.n_B) {
-                std::cout << "WARNING: Permutation does not contain " << graph.n_B << " elements, but " << vec.size() << "!" << std::endl;
+            if (vec.size() != m_graph.m_n_B) {
+                std::cout << "WARNING: Permutation does not contain " << m_graph.m_n_B << " elements, but " << vec.size() << "!" << std::endl;
                 std::cout << "Permutation: ";
                 print(vec);
             }
@@ -76,7 +76,7 @@ public:
             }
         }
 
-        // check that same permutation has not been found multiple times
+        // check that same m_permutation has not been found multiple times
         if(!no_duplicates(all_permutations)){
             std::cout << "WARNING: Permutation has been considered multiple times!" << std::endl;
         }
@@ -84,7 +84,7 @@ public:
     }
 
     /**
-     * Returns the permutation vector. All entries are in the range
+     * Returns the m_permutation vector. All entries are in the range
      * [0, ..., n_B - 1].
      *
      * @return Permutation of B.
@@ -95,7 +95,7 @@ public:
     }
 
     /**
-     * Returns the permutation vector. All entries are in the range
+     * Returns the m_permutation vector. All entries are in the range
      * [n_A + 1, ..., n_A + n_B].
      *
      * @return Permutation of B.
@@ -103,7 +103,7 @@ public:
     [[nodiscard]] std::vector<int> get_shifted_solution() const {
         std::vector<int> v(solution);
         for (auto &x: v) {
-            x += graph.n_A + 1;
+            x += graph.m_n_A + 1;
         }
         return v;
     }
@@ -111,7 +111,7 @@ public:
 
 private:
     /**
-     * Counts the number of cuts, based on the current permutation.
+     * Counts the number of cuts, based on the current m_permutation.
      *
      * @return Number of cuts.
      */
@@ -126,10 +126,10 @@ private:
                 int b2_pos = j;
 
                 // loop through the edges
-                for (size_t k = 0; k < graph.adj_list[b1].size(); ++k) {
-                    for (size_t l = 0; l < graph.adj_list[b2].size(); ++l) {
-                        int a1_pos = graph.adj_list[b1][k];
-                        int a2_pos = graph.adj_list[b2][l];
+                for (size_t k = 0; k < graph.m_adj_list[b1].size(); ++k) {
+                    for (size_t l = 0; l < graph.m_adj_list[b2].size(); ++l) {
+                        int a1_pos = graph.m_adj_list[b1][k];
+                        int a2_pos = graph.m_adj_list[b2][l];
 
                         bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
                         bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
@@ -143,15 +143,15 @@ private:
     }
 
     /**
-     * Recursively searches the permutation tree.
+     * Recursively searches the m_permutation tree.
      */
     void recursive_solve() {
-        if (curr_size == graph.n_B) {
+        if (curr_size == graph.m_n_B) {
 #if BF_DEBUG
-            // add found permutation
-            all_permutations.push_back(permutation);
+            // add found m_permutation
+            all_permutations.push_back(m_permutation);
 #endif
-            // we have a permutation, check the number of cuts
+            // we have a m_permutation, check the number of cuts
             int n_cuts = count_cuts();
             if (n_cuts < solution_n_cuts) {
                 std::copy(permutation.begin(), permutation.end(), solution.begin());
@@ -160,9 +160,9 @@ private:
             return;
         }
 
-        for (int i = 0; i < graph.n_B; ++i) {
+        for (int i = 0; i < graph.m_n_B; ++i) {
             if (!is_used[i]) {
-                // vertex i is not used, so append it to the permutation
+                // vertex i is not used, so append it to the m_permutation
                 permutation[curr_size] = i;
                 is_used[i] = true;
                 curr_size += 1;

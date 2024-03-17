@@ -41,15 +41,17 @@ void generate_tiny_dataset(){
 int main() {
     // generate_tiny_dataset();
 
+    // std::string file_path = "../data/test/own/tiny/5_8/64.gr"; std::string solution_path = "../data/test/own/tiny/5_8-sol/64.sol";
+    std::string file_path = "../data/test/own/tiny/5_7/93.gr"; std::string solution_path = "../data/test/own/tiny/5_7-sol/93.sol";
+    // std::string file_path = "../data/test/tiny_test_set/complete_4_5.gr";
     // std::string file_path = "../data/test/tiny_test_set/star_6.gr";
-    std::string file_path = "../data/test/medium_test_set/1.gr";
+    // std::string file_path = "../data/test/medium_test_set/6.gr"; std::string solution_path = "../data/test/medium_test_set-sol/6.sol";
 
     {
+        std::chrono::steady_clock::time_point sp = std::chrono::steady_clock::now();
         Graph g(file_path);
         Solver_BF solver_bf(g);
-
-        std::chrono::steady_clock::time_point sp = std::chrono::steady_clock::now();
-        // solver_bf.solve();
+        solver_bf.solve();
         std::chrono::steady_clock::time_point ep = std::chrono::steady_clock::now();
 
         std::vector<int> internal_solution = solver_bf.get_solution();
@@ -65,10 +67,9 @@ int main() {
     }
 
     {
+        std::chrono::steady_clock::time_point sp = std::chrono::steady_clock::now();
         Graph g(file_path);
         Solver solver(g);
-
-        std::chrono::steady_clock::time_point sp = std::chrono::steady_clock::now();
         solver.solve();
         std::chrono::steady_clock::time_point ep = std::chrono::steady_clock::now();
 
@@ -82,6 +83,16 @@ int main() {
         print(internal_solution);
         std::cout << "#Cuts   : " << g.determine_n_cuts(internal_solution) << std::endl;
         std::cout << "Seconds : " << get_elapsed_seconds(sp, ep) << std::endl;
+    }
+
+    {
+        if(!solution_path.empty()){
+            Graph g(file_path);
+            std::vector<int> sol = read_solution(solution_path, g.m_n_A + 1);
+            std::cout << "--- Solution ---" << std::endl;
+            print(sol);
+            std::cout << "#Cuts   : " << g.determine_n_cuts(sol) << std::endl;
+        }
     }
 
     return 0;

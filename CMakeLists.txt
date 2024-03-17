@@ -17,25 +17,29 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
 
 add_executable(PACE2024Exact
         main.cpp
+        src/CandidateManager.h
         src/Graph.h
-        src/Solver_BF.h
-        src/misc.h
-        src/misc.cpp
-        src/Solver.h
         src/GraphGenerator.h
-        src/MinCrossMatrix.h)
+        src/MinCrossMatrix.h
+        src/misc.cpp
+        src/misc.h
+        src/Solver.h
+        src/Solver_BF.h)
 
 add_executable(PACE2024Exact_test
+        src/CandidateManager.h
         src/Graph.h
-        src/Solver_BF.h
-        src/misc.h
+        src/GraphGenerator.h
+        src/MinCrossMatrix.h
         src/misc.cpp
-        tests/tiny_test.cpp
+        src/misc.h
+        src/Solver.h
+        src/Solver_BF.h
         tests/medium_test.cpp
-        tests/own_tiny_test.cpp
-        tests/misc_test.h
         tests/misc_test.cpp
-        src/MinCrossMatrix.h)
+        tests/misc_test.h
+        tests/own_tiny_test.cpp
+        tests/tiny_test.cpp)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

@@ -11,8 +11,8 @@
 #include "../src/Solver.h"
 #include "../src/misc.h"
 
-void compare_bf(std::string &graph_filepath, std::string &solution_filepath);
+void compare_bf(std::string &g_path, std::string &sol_path);
 
-void compare(std::string &graph_filepath, std::string &solution_filepath);
+void compare(std::string &g_path, std::string &sol_path);
 
 #endif //PACE2024EXACT_MISC_TEST_H
