@@ -38,8 +38,43 @@ void generate_tiny_dataset(){
     }
 }
 
+void generate_small_dataset(){
+    for(int i = 10; i < 21; ++i){
+        for(int j = 10; j < 21; ++j){
+            std::cout << i << " " << j << std::endl;
+            std::string directory = "../data/test/own/small/" + std::to_string(i) + "_" + std::to_string(j) + "/";
+            std::string directory_sol = "../data/test/own/small/" + std::to_string(i) + "_" + std::to_string(j) + "-sol/";
+
+            if(std::filesystem::is_directory(directory)){
+                continue;
+            }
+
+            std::filesystem::create_directories(directory);
+            std::filesystem::create_directories(directory_sol);
+
+            for(size_t k = 0; k < 100; ++k){
+                std::string file_path = directory + "" + std::to_string(k) + ".gr";
+                std::string file_path_sol = directory_sol + "" + std::to_string(k) + ".sol";
+
+                GraphGenerator graphGenerator(i, j, {1, 2, 3});
+                graphGenerator.generate();
+                graphGenerator.write_to_file(file_path);
+
+                Graph graph(file_path);
+                Solver_BF solver_bf(graph);
+                solver_bf.solve();
+                std::vector<int> solution = solver_bf.get_shifted_solution();
+
+                write_solution(solution, file_path_sol);
+            }
+        }
+    }
+}
+
 int main() {
     // generate_tiny_dataset();
+    generate_small_dataset();
+    return 0;
 
     // std::string file_path = "../data/test/own/tiny/5_8/64.gr"; std::string solution_path = "../data/test/own/tiny/5_8-sol/64.sol";
     std::string file_path = "../data/test/own/tiny/5_7/93.gr"; std::string solution_path = "../data/test/own/tiny/5_7-sol/93.sol";
