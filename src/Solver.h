@@ -8,7 +8,7 @@
 
 #include "Graph.h"
 #include "misc.h"
-#include "MinCrossMatrix.h"
+#include "CrossMatrix.h"
 #include "CandidateManager.h"
 
 
@@ -26,7 +26,7 @@ private:
     std::vector<CandidateManager> m_candidate_order;
 
     // Minimum Cross Matrix
-    MinCrossMatrix m_min_cross_matrix;
+    CrossMatrix m_cross_matrix;
 
     std::vector<int> m_solution; // holds the best found m_permutation
     int m_solution_n_cuts;
@@ -35,7 +35,7 @@ public:
     /**
      * Default constructor.
      *
-     * @param g The m_graph to optimize.
+     * @param g The graph to optimize.
      */
     explicit Solver(Graph &g) : m_graph(g) {
         m_permutation.resize(m_graph.m_n_B); // reserve space
@@ -44,7 +44,7 @@ public:
         m_counter.resize(m_graph.m_n_B, -1); // all m_counter are -1
         m_candidate_order.resize(m_graph.m_n_B, CandidateManager(m_graph.m_n_B));
 
-        m_min_cross_matrix = MinCrossMatrix(m_graph.m_n_B);
+        m_cross_matrix = CrossMatrix(m_graph.m_n_B);
 
         m_solution.resize(m_graph.m_n_B); // reserve space
         m_solution_n_cuts = std::numeric_limits<int>::max();
@@ -54,7 +54,7 @@ public:
      * Determines the m_permutation, with the least number of cuts.
      */
     void solve() {
-        initialize_MinCrossMatrix();
+        initialize_CrossMatrix();
 
         initial_greedy();
 
@@ -63,7 +63,7 @@ public:
     }
 
     /**
-     * Returns the m_permutation vector. All entries are in the range
+     * Returns the permutation vector. All entries are in the range
      * [0, ..., n_B - 1].
      *
      * @return Permutation of B.
@@ -74,7 +74,7 @@ public:
     }
 
     /**
-     * Returns the m_permutation vector. All entries are in the range
+     * Returns the permutation vector. All entries are in the range
      * [n_A + 1, ..., n_A + n_B].
      *
      * @return Permutation of B.
@@ -89,7 +89,7 @@ public:
 
 private:
     /**
-     * Counts the number of cuts, based on the current m_permutation.
+     * Counts the number of cuts, based on the current permutation.
      *
      * @return Number of cuts.
      */
@@ -97,24 +97,7 @@ private:
         int n_cuts = 0;
         for (int i = 0; i < size; ++i) {
             for (int j = i + 1; j < size; ++j) {
-                int b1 = perm[i];
-                int b2 = perm[j];
-
-                int b1_pos = i;
-                int b2_pos = j;
-
-                // loop through the edges
-                for (size_t k = 0; k < m_graph.m_adj_list[b1].size(); ++k) {
-                    for (size_t l = 0; l < m_graph.m_adj_list[b2].size(); ++l) {
-                        int a1_pos = m_graph.m_adj_list[b1][k];
-                        int a2_pos = m_graph.m_adj_list[b2][l];
-
-                        bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
-                        bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
-                        bool cut = cut1 || cut2;
-                        n_cuts += cut;
-                    }
-                }
+                n_cuts += m_cross_matrix.get_entry(perm[i], perm[j]);
             }
         }
         return n_cuts;
@@ -131,48 +114,38 @@ private:
     int count_cut_gain(std::vector<int> &perm, int size, int c) {
         int n_cuts = 0;
         for (int i = 0; i < size; ++i) {
-            int b1 = perm[i];
-            int b2 = c;
-
-            int b1_pos = i;
-            int b2_pos = size;
-
-            // loop through the edges
-            for (size_t k = 0; k < m_graph.m_adj_list[b1].size(); ++k) {
-                for (size_t l = 0; l < m_graph.m_adj_list[b2].size(); ++l) {
-                    int a1_pos = m_graph.m_adj_list[b1][k];
-                    int a2_pos = m_graph.m_adj_list[b2][l];
-
-                    bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
-                    bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
-                    bool cut = cut1 || cut2;
-                    n_cuts += cut;
-                }
-            }
+            n_cuts += m_cross_matrix.get_entry(perm[i], c);
         }
         return n_cuts;
     }
 
     /**
-     * Initialize the Minimum-Cross-Matrix.
+     * Initialize the Cross-Matrix.
      */
-    void initialize_MinCrossMatrix() {
+    void initialize_CrossMatrix() {
         for (int i = 0; i < m_graph.m_n_B; ++i) {
-            for (int j = i + 1; j < m_graph.m_n_B; ++j) {
+            for (int j = 0; j < m_graph.m_n_B; ++j) {
                 m_permutation[0] = i;
                 m_permutation[1] = j;
-                int c1 = count_cuts(m_permutation, 2);
+                int c = 0;
+                if (i != j) {
+                    // loop through the edges
+                    for (size_t k = 0; k < m_graph.m_adj_list[i].size(); ++k) {
+                        for (size_t l = 0; l < m_graph.m_adj_list[j].size(); ++l) {
+                            int a1_pos = m_graph.m_adj_list[i][k];
+                            int a2_pos = m_graph.m_adj_list[j][l];
 
-                m_permutation[1] = i;
-                m_permutation[0] = j;
-                int c2 = count_cuts(m_permutation, 2);
-                m_min_cross_matrix.set_entry(i, j, std::min(c1, c2));
+                            c += (a2_pos < a1_pos);
+                        }
+                    }
+                }
+                m_cross_matrix.set_entry(i, j, c);
             }
         }
     }
 
     /**
-     * Computes an initial greedy m_solution.
+     * Computes an initial greedy solution.
      */
     void initial_greedy() {
         int size = m_graph.m_n_B;
@@ -207,94 +180,74 @@ private:
         m_solution_n_cuts = n_cuts;
     }
 
-#define MOVE_UP() depth -= 1; continue
-#define MOVE_DOWN() depth += 1; execute_DCO(depth); m_counter[depth] = -1; continue
+#define TREE_UP 0
+#define TREE_STAY 1
 
     /**
      * Iteratively searches for a solution.
      */
     void iterative_search() {
         int depth = 0;
+        int tree_movement = TREE_STAY;
+
         while (depth >= 0) {
 
-            if(depth > 0) {
-                // TODO: Error here somewhere
-                int curr_cuts = count_cuts(m_permutation, depth);
-                int min_remaining_cuts = 0; //get_minCutsRemaining(depth);
-                if (curr_cuts + min_remaining_cuts >= m_solution_n_cuts) {
-                    m_is_used[m_candidate_order[depth - 1][m_counter[depth - 1]].c] = false;
-                    MOVE_UP();
+            if (tree_movement == TREE_UP) {
+                // go up
+                depth -= 1;
+                tree_movement = TREE_STAY;
+                continue;
+            } else {
+                // release the current element and move further
+                if (m_counter[depth] >= 0) {
+                    m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
                 }
-            }
+                m_counter[depth] += 1;
 
-            // release the current element and move further
-            if (m_counter[depth] >= 0) {
-                m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
-            }
-            m_counter[depth] += 1;
-
-            // check if at the end
-            if (m_counter[depth] == (int) m_candidate_order[depth].get_end()) {
-                MOVE_UP();
-            }
-
-            // valid element found, put in permutation and mark as used
-            m_permutation[depth] = m_candidate_order[depth][m_counter[depth]].c;
-            m_is_used[m_candidate_order[depth][m_counter[depth]].c] = true;
-
-            // check if we arrived at the bottom
-            if (depth + 1 == m_graph.m_n_B) {
-                int n_cuts = count_cuts(m_permutation, depth + 1);
-                if (n_cuts < m_solution_n_cuts) {
-                    std::copy(m_permutation.begin(), m_permutation.end(), m_solution.begin());
-                    m_solution_n_cuts = n_cuts;
+                // check if at the end
+                if (m_counter[depth] == (int) m_candidate_order[depth].get_end()) {
+                    tree_movement = TREE_UP;
+                    continue;
                 }
-                // release the element, because we go up
-                m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
-                MOVE_UP();
-            }
 
-            // move down and reset counter
-            MOVE_DOWN();
+                // check if we can abort early
+                int current_n_cuts = count_cuts(m_permutation, depth);
+                int min_cuts_remaining = get_minCutsRemaining(depth);
+                if (current_n_cuts + min_cuts_remaining >= m_solution_n_cuts) {
+                    // release the element, because we go up
+                    m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
+                    tree_movement = TREE_UP;
+                    continue;
+                }
+
+                // valid element found
+                m_permutation[depth] = m_candidate_order[depth][m_counter[depth]].c;
+                m_is_used[m_candidate_order[depth][m_counter[depth]].c] = true;
+
+                // check if we arrived at the bottom
+                if (depth + 1 == m_graph.m_n_B) {
+                    int n_cuts = count_cuts(m_permutation, depth + 1);
+                    if (n_cuts < m_solution_n_cuts) {
+                        std::copy(m_permutation.begin(), m_permutation.end(), m_solution.begin());
+                        m_solution_n_cuts = n_cuts;
+                    }
+
+                    // release the element, because we go up
+                    m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
+                    tree_movement = TREE_UP;
+                    continue;
+                }
+
+                // move down and reset counter
+                depth += 1;
+                m_counter[depth] = -1;
+                execute_DCO(depth);
+
+                tree_movement = TREE_STAY;
+                continue;
+            }
         }
     }
-
-    /**
-     * Recursively searches the m_permutation tree.
-     */
-     /*
-    void recursive_search(int depth) {
-        // print(m_permutation, m_curr_size);
-        if (depth == m_graph.m_n_B) {
-            int n_cuts = count_cuts(m_permutation, m_curr_size);
-            if (n_cuts < m_solution_n_cuts) {
-                m_solution_n_cuts = n_cuts;
-                std::copy(m_permutation.begin(), m_permutation.end(), m_solution.begin());
-            }
-            return;
-        }
-
-        execute_DCO(depth);
-
-        int curr_cuts = count_cuts(m_permutation, m_curr_size);
-        int min_remaining_cuts = get_minCutsRemaining(depth);
-        if (curr_cuts + min_remaining_cuts >= m_solution_n_cuts) {
-            return;
-        }
-
-        for (size_t i = 0; i < m_candidate_order[depth].get_end(); ++i) {
-            m_permutation[depth] = m_candidate_order[depth][i].c;
-            m_is_used[m_candidate_order[depth][i].c] = 1;
-            m_curr_size += 1;
-
-            recursive_search(depth + 1);
-
-            m_is_used[m_candidate_order[depth][i].c] = 0;
-            m_curr_size -= 1;
-        }
-
-    }
-      */
 
     /**
      * Executes Dynamic-Candidate-Ordering at depth 0.
@@ -303,7 +256,6 @@ private:
         for (int i = 0; i < m_graph.m_n_B; ++i) {
             m_candidate_order[0].push_back({i, 0});
         }
-        // m_candidate_order[0].print();
     };
 
     /**
@@ -316,7 +268,7 @@ private:
         for (size_t i = 0; i < m_candidate_order[depth - 1].get_end(); ++i) {
             if (!m_is_used[m_candidate_order[depth - 1][i].c]) {
                 int c = m_candidate_order[depth - 1][i].c;
-                int gain = 0; // count_cut_gain(m_permutation, m_curr_size, c);
+                int gain = count_cut_gain(m_permutation, depth, c);
                 m_candidate_order[depth].push_back({c, gain});
             }
         }
@@ -355,7 +307,7 @@ private:
                 int c1 = m_candidate_order[depth][i].c;
                 int c2 = m_candidate_order[depth][j].c;
 
-                n_cuts += m_min_cross_matrix.get_entry(c1, c2);
+                n_cuts += std::min(m_cross_matrix.get_entry(c1, c2), m_cross_matrix.get_entry(c2, c1));
             }
         }
         return n_cuts;

@@ -2,6 +2,7 @@
 #define PACE2024EXACT_CANDIDATEMANAGER_H
 
 #include <vector>
+
 #include "misc.h"
 
 /**
@@ -37,18 +38,14 @@ public:
     /** vector like functions */
     [[nodiscard]] inline Candidate operator[](size_t i) const {return m_candidates[i];}
     [[nodiscard]] inline Candidate &operator[](size_t i) {return m_candidates[i];}
-    [[nodiscard]] inline Candidate back() const { return m_candidates[m_e_idx - 1]; }
-    [[nodiscard]] inline Candidate &back() { return m_candidates[m_e_idx - 1]; }
-    [[nodiscard]] inline Candidate front() const { return m_candidates[m_s_idx]; }
-    [[nodiscard]] inline Candidate &front() { return m_candidates[m_s_idx]; }
     inline void push_back(Candidate entry) { m_candidates[m_e_idx] = entry; m_e_idx += 1; }
-    inline void pop_back() { m_e_idx -= 1; }
-    inline void pop_front() { m_s_idx += 1; }
     [[nodiscard]] inline size_t size() const { return m_e_idx - m_s_idx; }
-    [[nodiscard]] inline size_t get_start() const { return m_s_idx; }
     [[nodiscard]] inline size_t get_end() const { return m_e_idx; }
     inline void clear() { m_s_idx = 0; m_e_idx = 0; }
 
+    /**
+     * Sorts the CandidateManager ascending.
+     */
     void sort(){
         auto first = m_candidates.begin();
         std::advance(first, m_s_idx);

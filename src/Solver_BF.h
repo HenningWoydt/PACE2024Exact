@@ -151,7 +151,7 @@ private:
             // add found m_permutation
             all_permutations.push_back(m_permutation);
 #endif
-            // we have a m_permutation, check the number of cuts
+            // we have a permutation, check the number of cuts
             int n_cuts = count_cuts();
             if (n_cuts < solution_n_cuts) {
                 std::copy(permutation.begin(), permutation.end(), solution.begin());

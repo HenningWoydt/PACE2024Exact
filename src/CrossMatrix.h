@@ -1,12 +1,12 @@
-#ifndef PACE2024EXACT_MINCROSSMATRIX_H
-#define PACE2024EXACT_MINCROSSMATRIX_H
+#ifndef PACE2024EXACT_CROSSMATRIX_H
+#define PACE2024EXACT_CROSSMATRIX_H
 
 #include <vector>
 
 /**
  * Class to hold a Minimum-Cross-Matrix.
  */
-class MinCrossMatrix {
+class CrossMatrix {
 private:
     int m_n = 0;
     std::vector<int> m_matrix;
@@ -16,14 +16,14 @@ public:
     /**
      * Default constructor.
      */
-    MinCrossMatrix() = default;
+    CrossMatrix() = default;
 
     /**
      * Default constructor.
      *
      * @param n Size of the m_matrix.
      */
-    explicit MinCrossMatrix(int n) {
+    explicit CrossMatrix(int n) {
         m_n = n;
         m_matrix.resize(m_n * m_n, 0);
     }
@@ -36,10 +36,7 @@ public:
      * @param val The value to insert.
      */
     void set_entry(int idx1, int idx2, int val) {
-        int i1 = std::max(idx1, idx2);
-        int i2 = std::min(idx1, idx2);
-
-        m_matrix[i1 * m_n + i2] = val;
+        m_matrix[idx1 * m_n + idx2] = val;
     }
 
     /**
@@ -50,10 +47,7 @@ public:
      * @return The value at the index.
      */
     int get_entry(int idx1, int idx2) {
-        int i1 = std::max(idx1, idx2);
-        int i2 = std::min(idx1, idx2);
-
-        return m_matrix[i1 * m_n + i2];
+        return m_matrix[idx1 * m_n + idx2];
     }
 
     /**
@@ -74,4 +68,4 @@ public:
     }
 };
 
-#endif //PACE2024EXACT_MINCROSSMATRIX_H
+#endif //PACE2024EXACT_CROSSMATRIX_H

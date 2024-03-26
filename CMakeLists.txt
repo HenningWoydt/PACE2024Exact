@@ -12,15 +12,15 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -finline-functions -fwhole-program -ftree-vectorize -flto -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -fopenmp -finline-functions -flto -fwhole-program -ftree-vectorize -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -fopenmp -Wall -Wextra -pedantic")
 
 add_executable(PACE2024Exact
         main.cpp
         src/CandidateManager.h
         src/Graph.h
         src/GraphGenerator.h
-        src/MinCrossMatrix.h
+        src/CrossMatrix.h
         src/misc.cpp
         src/misc.h
         src/Solver.h
@@ -30,7 +30,7 @@ add_executable(PACE2024Exact_test
         src/CandidateManager.h
         src/Graph.h
         src/GraphGenerator.h
-        src/MinCrossMatrix.h
+        src/CrossMatrix.h
         src/misc.cpp
         src/misc.h
         src/Solver.h
@@ -39,7 +39,14 @@ add_executable(PACE2024Exact_test
         tests/misc_test.cpp
         tests/misc_test.h
         tests/own_tiny_test.cpp
-        tests/tiny_test.cpp)
+        tests/tiny_test.cpp
+        tests/own_small_test.cpp)
+
+find_package(OpenMP)
+if (OpenMP_CXX_FOUND)
+    target_link_libraries(PACE2024Exact OpenMP::OpenMP_CXX)
+    target_link_libraries(PACE2024Exact_test OpenMP::OpenMP_CXX)
+endif ()
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

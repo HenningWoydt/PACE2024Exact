@@ -5,8 +5,8 @@ void compare_bf(std::string &g_path, std::string &sol_path) {
     std::vector<int> solver_solution;
     std::vector<int> real_solution;
 
-    int solver_n_cuts;
     int solver_bf_n_cuts;
+    int solver_n_cuts;
     int real_n_cuts;
 
     {
@@ -36,16 +36,24 @@ void compare_bf(std::string &g_path, std::string &sol_path) {
 
 void compare(std::string &g_path, std::string &sol_path) {
     return;
-    Graph g(g_path);
+    std::vector<int> solver_solution;
+    std::vector<int> real_solution;
 
-    Solver solver(g);
-    solver.solve();
+    int solver_n_cuts;
+    int real_n_cuts;
 
-    std::vector<int> solution = solver.get_solution();
-    std::vector<int> real_solution = read_solution(sol_path, g.m_n_A + 1);
+    {
+        Graph g(g_path);
+        Solver solver(g);
+        solver.solve();
+        solver_solution = solver.get_solution();
+        solver_n_cuts = g.determine_n_cuts(solver_solution);
+    }
+    {
+        Graph g(g_path);
+        real_solution = read_solution(sol_path, g.m_n_A + 1);
+        real_n_cuts = g.determine_n_cuts(real_solution);
+    }
 
-    // determine the number of cuts for all solutions
-    int n_cuts = g.determine_n_cuts(solution);
-    int real_n_cuts = g.determine_n_cuts(real_solution);
-    EXPECT_EQ(n_cuts, real_n_cuts);
+    EXPECT_EQ(solver_n_cuts, real_n_cuts) << g_path << " " << sol_path;
 }

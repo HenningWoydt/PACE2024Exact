@@ -1,5 +1,10 @@
 #include "misc.h"
 
+bool file_exists(const std::string& file_path) {
+    struct stat buffer{};
+    return (stat (file_path.c_str(), &buffer) == 0);
+}
+
 bool no_duplicates(const std::vector<std::vector<int>> &vec) {
     for (size_t i = 0; i < vec.size(); ++i) {
         for (size_t j = i + 1; j < vec.size(); ++j) {

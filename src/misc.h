@@ -6,7 +6,20 @@
 #include <cstdint>
 #include <fstream>
 #include <chrono>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string>
+
+
 #include "CandidateManager.h"
+
+/**
+ * Checks if a file exists.
+ *
+ * @param file_path Path to the file.
+ * @return True if file exists, False else.
+ */
+bool file_exists(const std::string& file_path);
 
 /**
  * Prints the content of a vector in a Numpy-style way. The '<<' operator must
