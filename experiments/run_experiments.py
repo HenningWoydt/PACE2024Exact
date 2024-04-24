@@ -3,7 +3,7 @@ import signal
 import subprocess
 import sys
 
-TIME_LIMIT = 1800
+TIME_LIMIT = 7200
 
 RESULT_FILE = "res.txt"
 LOG_FILE = "log.txt"
@@ -17,6 +17,16 @@ GRAPHS = [
     '../data/exact-public/38.gr',
     '../data/exact-public/68.gr',
     '../data/exact-public/69.gr',
+    '../data/test/own/100/0.gr',
+    '../data/test/own/100/1.gr',
+    '../data/test/own/100/2.gr',
+    '../data/test/own/100/3.gr',
+    '../data/test/own/100/4.gr',
+    '../data/test/own/100/5.gr',
+    '../data/test/own/100/6.gr',
+    '../data/test/own/100/7.gr',
+    '../data/test/own/100/8.gr',
+    '../data/test/own/100/9.gr',
 ]
 
 

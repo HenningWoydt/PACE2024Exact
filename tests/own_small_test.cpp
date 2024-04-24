@@ -11,8 +11,8 @@ TEST(OwnSmall, T11) {
             std::string g_path = "../data/test/own/small/11_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/11_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -24,8 +24,8 @@ TEST(OwnSmall, T12) {
             std::string g_path = "../data/test/own/small/12_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/12_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -37,8 +37,8 @@ TEST(OwnSmall, T13) {
             std::string g_path = "../data/test/own/small/13_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/13_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -50,8 +50,8 @@ TEST(OwnSmall, T14) {
             std::string g_path = "../data/test/own/small/14_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/14_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -63,8 +63,8 @@ TEST(OwnSmall, T15) {
             std::string g_path = "../data/test/own/small/15_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/15_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -76,8 +76,8 @@ TEST(OwnSmall, T16) {
             std::string g_path = "../data/test/own/small/16_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/16_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -89,8 +89,8 @@ TEST(OwnSmall, T17) {
             std::string g_path = "../data/test/own/small/17_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/17_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -102,8 +102,8 @@ TEST(OwnSmall, T18) {
             std::string g_path = "../data/test/own/small/18_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/18_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -115,8 +115,8 @@ TEST(OwnSmall, T19) {
             std::string g_path = "../data/test/own/small/19_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/19_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
@@ -128,8 +128,8 @@ TEST(OwnSmall, T20) {
             std::string g_path = "../data/test/own/small/20_" + std::to_string(i) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/tiny/20_" + std::to_string(i) + "-sol/" + std::to_string(j) + ".sol";
 
-            if(file_exists(g_path) && file_exists(sol_path)) {
-                compare(g_path, sol_path);
+            if(file_exists(g_path)) {
+                compare_bf(g_path, sol_path);
             }
         }
     }
