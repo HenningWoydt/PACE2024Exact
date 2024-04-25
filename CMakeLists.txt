@@ -38,9 +38,8 @@ add_executable(PACE2024Exact_test
         tests/medium_test.cpp
         tests/misc_test.cpp
         tests/misc_test.h
-        tests/own_tiny_test.cpp
         tests/tiny_test.cpp
-        tests/own_small_test.cpp)
+        tests/own_test.cpp)
 
 find_package(OpenMP)
 if (OpenMP_CXX_FOUND)

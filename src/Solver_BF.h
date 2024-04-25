@@ -54,14 +54,14 @@ public:
 
 #if BF_DEBUG
         // check that n! permutations have been found
-        if (all_permutations.size() != fac(m_graph.m_n_B)) {
-            std::cout << "WARNING: Not all permutations have been found! Only " << all_permutations.size() << " of " << fac(m_graph.m_n_B) << " have been found!" << std::endl;
+        if (all_permutations.size() != fac(graph.m_n_B)) {
+            std::cout << "WARNING: Not all permutations have been found! Only " << all_permutations.size() << " of " << fac(graph.m_n_B) << " have been found!" << std::endl;
         }
 
         // check that each entry has exactly m_n_B entries
         for (auto &vec: all_permutations) {
-            if (vec.size() != m_graph.m_n_B) {
-                std::cout << "WARNING: Permutation does not contain " << m_graph.m_n_B << " elements, but " << vec.size() << "!" << std::endl;
+            if (vec.size() != graph.m_n_B) {
+                std::cout << "WARNING: Permutation does not contain " << graph.m_n_B << " elements, but " << vec.size() << "!" << std::endl;
                 std::cout << "Permutation: ";
                 print(vec);
             }
@@ -122,19 +122,13 @@ private:
                 int b1 = permutation[i];
                 int b2 = permutation[j];
 
-                int b1_pos = i;
-                int b2_pos = j;
-
                 // loop through the edges
                 for (size_t k = 0; k < graph.m_adj_list[b1].size(); ++k) {
                     for (size_t l = 0; l < graph.m_adj_list[b2].size(); ++l) {
                         int a1_pos = graph.m_adj_list[b1][k];
                         int a2_pos = graph.m_adj_list[b2][l];
 
-                        bool cut1 = (a1_pos < a2_pos) && (b2_pos < b1_pos);
-                        bool cut2 = (a2_pos < a1_pos) && (b1_pos < b2_pos);
-                        bool cut = cut1 || cut2;
-                        n_cuts += cut;
+                        n_cuts += (a2_pos < a1_pos);
                     }
                 }
             }
@@ -143,13 +137,13 @@ private:
     }
 
     /**
-     * Recursively searches the m_permutation tree.
+     * Recursively searches the permutation tree.
      */
     void recursive_solve() {
         if (curr_size == graph.m_n_B) {
 #if BF_DEBUG
             // add found m_permutation
-            all_permutations.push_back(m_permutation);
+            all_permutations.push_back(permutation);
 #endif
             // we have a permutation, check the number of cuts
             int n_cuts = count_cuts();

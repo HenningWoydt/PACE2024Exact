@@ -74,6 +74,11 @@ public:
                 }
             }
             file.close();
+
+            // sort each neighborhood
+            for(int i = 0; i < m_n_B; ++i){
+                std::sort(m_adj_list[i].begin(), m_adj_list[i].end());
+            }
         } else {
             std::cout << "Could not open file " << file_path << " !" << std::endl;
         }
