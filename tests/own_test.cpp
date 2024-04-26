@@ -5,9 +5,11 @@
 
 #include "misc_test.h"
 
+#define max_n_B 11
+
 TEST(Own, T1) {
     size_t n_A = 1;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -21,7 +23,7 @@ TEST(Own, T1) {
 
 TEST(Own, T2) {
     size_t n_A = 2;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -35,7 +37,7 @@ TEST(Own, T2) {
 
 TEST(Own, T3) {
     size_t n_A = 3;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -49,7 +51,7 @@ TEST(Own, T3) {
 
 TEST(Own, T4) {
     size_t n_A = 4;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -63,7 +65,7 @@ TEST(Own, T4) {
 
 TEST(Own, T5) {
     size_t n_A = 5;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -77,7 +79,7 @@ TEST(Own, T5) {
 
 TEST(Own, T6) {
     size_t n_A = 6;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -91,7 +93,7 @@ TEST(Own, T6) {
 
 TEST(Own, T7) {
     size_t n_A = 7;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -105,7 +107,7 @@ TEST(Own, T7) {
 
 TEST(Own, T8) {
     size_t n_A = 8;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -119,7 +121,7 @@ TEST(Own, T8) {
 
 TEST(Own, T9) {
     size_t n_A = 9;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -133,7 +135,7 @@ TEST(Own, T9) {
 
 TEST(Own, T10) {
     size_t n_A = 10;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -147,7 +149,7 @@ TEST(Own, T10) {
 
 TEST(Own, T11) {
     size_t n_A = 11;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -161,7 +163,7 @@ TEST(Own, T11) {
 
 TEST(Own, T12) {
     size_t n_A = 12;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -175,7 +177,7 @@ TEST(Own, T12) {
 
 TEST(Own, T13) {
     size_t n_A = 13;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -189,7 +191,7 @@ TEST(Own, T13) {
 
 TEST(Own, T14) {
     size_t n_A = 14;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -203,7 +205,7 @@ TEST(Own, T14) {
 
 TEST(Own, T15) {
     size_t n_A = 15;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -217,7 +219,7 @@ TEST(Own, T15) {
 
 TEST(Own, T16) {
     size_t n_A = 16;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -231,7 +233,7 @@ TEST(Own, T16) {
 
 TEST(Own, T17) {
     size_t n_A = 17;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -245,7 +247,7 @@ TEST(Own, T17) {
 
 TEST(Own, T18) {
     size_t n_A = 18;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -259,7 +261,7 @@ TEST(Own, T18) {
 
 TEST(Own, T19) {
     size_t n_A = 19;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -273,7 +275,7 @@ TEST(Own, T19) {
 
 TEST(Own, T20) {
     size_t n_A = 20;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -287,7 +289,7 @@ TEST(Own, T20) {
 
 TEST(Own, T21) {
     size_t n_A = 21;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -301,7 +303,7 @@ TEST(Own, T21) {
 
 TEST(Own, T22) {
     size_t n_A = 22;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -315,7 +317,7 @@ TEST(Own, T22) {
 
 TEST(Own, T23) {
     size_t n_A = 23;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -329,7 +331,7 @@ TEST(Own, T23) {
 
 TEST(Own, T24) {
     size_t n_A = 24;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -343,7 +345,7 @@ TEST(Own, T24) {
 
 TEST(Own, T25) {
     size_t n_A = 25;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -357,7 +359,7 @@ TEST(Own, T25) {
 
 TEST(Own, T26) {
     size_t n_A = 26;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -371,7 +373,7 @@ TEST(Own, T26) {
 
 TEST(Own, T27) {
     size_t n_A = 27;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -385,7 +387,7 @@ TEST(Own, T27) {
 
 TEST(Own, T28) {
     size_t n_A = 28;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -399,7 +401,7 @@ TEST(Own, T28) {
 
 TEST(Own, T29) {
     size_t n_A = 29;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -413,7 +415,7 @@ TEST(Own, T29) {
 
 TEST(Own, T30) {
     size_t n_A = 30;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -427,7 +429,7 @@ TEST(Own, T30) {
 
 TEST(Own, T31) {
     size_t n_A = 31;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -441,7 +443,7 @@ TEST(Own, T31) {
 
 TEST(Own, T32) {
     size_t n_A = 32;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -455,7 +457,7 @@ TEST(Own, T32) {
 
 TEST(Own, T33) {
     size_t n_A = 33;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -469,7 +471,7 @@ TEST(Own, T33) {
 
 TEST(Own, T34) {
     size_t n_A = 34;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -483,7 +485,7 @@ TEST(Own, T34) {
 
 TEST(Own, T35) {
     size_t n_A = 35;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -497,7 +499,7 @@ TEST(Own, T35) {
 
 TEST(Own, T36) {
     size_t n_A = 36;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -511,7 +513,7 @@ TEST(Own, T36) {
 
 TEST(Own, T37) {
     size_t n_A = 37;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -525,7 +527,7 @@ TEST(Own, T37) {
 
 TEST(Own, T38) {
     size_t n_A = 38;
-    for (size_t n_B = 1; n_B < 13; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -539,7 +541,7 @@ TEST(Own, T38) {
 
 TEST(Own, T39) {
     size_t n_A = 39;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -553,7 +555,7 @@ TEST(Own, T39) {
 
 TEST(Own, T40) {
     size_t n_A = 40;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -567,7 +569,7 @@ TEST(Own, T40) {
 
 TEST(Own, T41) {
     size_t n_A = 41;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -581,7 +583,7 @@ TEST(Own, T41) {
 
 TEST(Own, T42) {
     size_t n_A = 42;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -595,7 +597,7 @@ TEST(Own, T42) {
 
 TEST(Own, T43) {
     size_t n_A = 43;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -609,7 +611,7 @@ TEST(Own, T43) {
 
 TEST(Own, T44) {
     size_t n_A = 44;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -623,7 +625,7 @@ TEST(Own, T44) {
 
 TEST(Own, T45) {
     size_t n_A = 45;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -637,7 +639,7 @@ TEST(Own, T45) {
 
 TEST(Own, T46) {
     size_t n_A = 46;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -651,7 +653,7 @@ TEST(Own, T46) {
 
 TEST(Own, T47) {
     size_t n_A = 47;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -665,7 +667,7 @@ TEST(Own, T47) {
 
 TEST(Own, T48) {
     size_t n_A = 48;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -679,7 +681,7 @@ TEST(Own, T48) {
 
 TEST(Own, T49) {
     size_t n_A = 49;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
@@ -693,7 +695,7 @@ TEST(Own, T49) {
 
 TEST(Own, T50) {
     size_t n_A = 50;
-    for (size_t n_B = 1; n_B < 11; ++n_B) {
+    for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
             std::string g_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
