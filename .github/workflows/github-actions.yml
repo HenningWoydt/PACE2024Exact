@@ -1,0 +1,21 @@
+name: GitHub Actions
+run-name: ${{ github.actor }} is testing 🚀
+on: [push]
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: (cd utility && python generate_test_graphs.py)
+      - run: mkdir -p build
+      - run: cmake -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release -S . -B ./build
+      - run: cmake --build build --target CCSMSM_Test -j 14
+
+  test:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - run: (cd build && wget https://github.com/google/gtest-parallel/archive/refs/heads/master.zip)
+      - run: (cd build && unzip -o master.zip)
+      - run: (cd build && ./gtest-parallel-master/gtest-parallel -w 14 ./PACE2024Exact_test)
