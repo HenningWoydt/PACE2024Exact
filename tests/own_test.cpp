@@ -523,7 +523,7 @@ TEST(Own, T37) {
     }
 }
 
-TEST(Own, 38) {
+TEST(Own, T38) {
     size_t n_A = 38;
     for (size_t n_B = 1; n_B < 13; ++n_B) {
         for (size_t j = 0; j < 1000; ++j) {
