@@ -5,7 +5,7 @@
 
 #include "misc_test.h"
 
-#define max_n_B 8
+#define max_n_B 11
 
 TEST(Own, T1) {
     size_t n_A = 1;
