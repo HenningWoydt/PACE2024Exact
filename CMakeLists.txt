@@ -12,8 +12,8 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -fopenmp -finline-functions -flto -fwhole-program -ftree-vectorize -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -fopenmp -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -finline-functions -flto -fwhole-program -ftree-vectorize -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
 
 add_executable(PACE2024Exact
         main.cpp
