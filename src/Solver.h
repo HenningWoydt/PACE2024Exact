@@ -31,6 +31,9 @@ private:
     std::vector<int> m_solution; // holds the best found m_permutation
     int m_solution_n_cuts;
 
+    std::chrono::steady_clock::time_point sp;
+    std::chrono::steady_clock::time_point ep;
+
 public:
     /**
      * Default constructor.
@@ -54,12 +57,16 @@ public:
      * Determines the m_permutation, with the least number of cuts.
      */
     void solve() {
+        sp = std::chrono::steady_clock::now();
+
         initialize_CrossMatrix();
 
         initial_greedy();
 
         execute_DCO_depth_0();
         iterative_search();
+
+        ep = std::chrono::steady_clock::now();
     }
 
     /**
@@ -85,6 +92,15 @@ public:
             x += m_graph.m_n_A + 1;
         }
         return v;
+    }
+
+    /**
+     * Return the elapsed time in seconds.
+     *
+     * @return Time in seconds.
+     */
+    [[nodiscard]] double get_time() const {
+        return (double) ((double) std::chrono::duration_cast<std::chrono::nanoseconds>(ep - sp).count() / 1000000000.0);
     }
 
 private:

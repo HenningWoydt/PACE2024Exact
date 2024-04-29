@@ -7,3 +7,4 @@ cmake-build-release
 data/test/own
 
 experiments/log.txt
+experiments/res.txt

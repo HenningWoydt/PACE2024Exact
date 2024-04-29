@@ -32,29 +32,22 @@ std::string convert(std::vector<int> &vec){
 }
 
 int main(int argc, char *argv[]) {
-    // generate_graphs();
-    // exit(EXIT_SUCCESS);
-    for(size_t i = 0; i < 1000; ++i) {
-        std::string path = "../data/test/own/tiny/10_10/" + std::to_string(i) + ".gr";
-        Graph g(path);
-        Solver_BF solver_bf(g);
-        solver_bf.solve();
-        std::vector<int> solver_bf_solution = solver_bf.get_solution();
-        std::vector<int> shifted_solution = solver_bf.get_shifted_solution();
-    }
+    std::vector<std::string> args(argv, argv + argc);
 
-    /*
-    std::vector<std::string> args(argv + 1, argv + argc);
-    Graph g(args[0]);
+    Graph g(args[1]);
     Solver s(g);
     s.solve();
 
     std::vector<int> solver_solution = s.get_solution();
     int solver_n_cuts = g.determine_n_cuts(solver_solution);
+    double time = s.get_time();
+
+    if(!std::filesystem::exists(args[2])){
+        std::ofstream outfile(args[2]);
+    }
 
     std::ofstream outfile(args[2], std::ios_base::app);
-    outfile << args[0] << ";" << convert(solver_solution) << ";" << solver_n_cuts << std::endl;
-    */
+    outfile << args[1] << ";" << convert(solver_solution) << ";" << solver_n_cuts << ";" << time << std::endl;
 
     return 0;
 }
