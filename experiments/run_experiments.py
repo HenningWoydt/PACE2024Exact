@@ -3,7 +3,7 @@ import signal
 import subprocess
 import sys
 
-TIME_LIMIT = 60
+TIME_LIMIT = 15
 
 RESULT_FILE = "res.txt"
 LOG_FILE = "log.txt"
