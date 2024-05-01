@@ -8,10 +8,10 @@
 
 #include "../src/Graph.h"
 #include "../src/Solver_BF.h"
-#include "../src/Solver.h"
+#include "../src/ExhaustiveSolver.h"
 #include "../src/misc.h"
 
-void compare_bf(std::string &g_path, std::string &sol_path);
+void compare_exhaustive(std::string &g_path, std::string &sol_path);
 
 void compare(std::string &g_path, std::string &sol_path);
 

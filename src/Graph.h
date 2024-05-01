@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "misc.h"
+#include "AlignedVector.h"
 
 /**
  * Class to store the bipartite graph.
@@ -20,7 +21,9 @@ public:
     int m_n_B = 0;
     int m_n_edges = 0;
 
-    std::vector<std::vector<int>> m_adj_list;
+    AlignedVector<AlignedVector<int>> m_adj_list;
+
+    AlignedVector<AlignedVector<int>> m_adj_list_from_A;
 
     /**
      * Reads a graph from a file.
@@ -62,6 +65,13 @@ public:
                     i += 1;
                 }
 
+                // adjacency list for vertices of A
+                m_adj_list_from_A.resize(m_n_A);
+                for(int j = 0; j < m_n_A; ++j){
+                    m_adj_list_from_A[j].reserve(16);
+                }
+
+                // adjacency list for vertices of B
                 m_adj_list.resize(m_n_B);
                 for(int j = 0; j < m_n_B; ++j){
                     m_adj_list[j].reserve(16);
@@ -81,6 +91,7 @@ public:
                     a = a * 10 + line[i] - '0';
                     i += 1;
                 }
+                a -= 1;
                 i += 1;
 
                 // read in vertex b
@@ -113,6 +124,13 @@ public:
         m_n_edges = 0;
 
         m_adj_list.resize(m_n_B);
+        m_adj_list_from_A.resize(m_n_A);
+    }
+
+    Graph(){
+        m_n_A = 0;
+        m_n_B = 0;
+        m_n_edges = 0;
     }
 
     /**
@@ -122,18 +140,23 @@ public:
      * @param a Vertex a (fixed vertex).
      * @param b Vertex b (movable vertex).
      */
-    void add_edge(int a, int b){
+    inline void add_edge(int a, int b){
         m_n_edges += 1;
         m_adj_list[b].push_back(a);
+        m_adj_list_from_A[a].push_back(b);
     }
 
     /**
      * Sorts each neighborhood ascending.
      */
-    void sort_neighborhoods(){
+    inline void sort_neighborhoods(){
         // sort each neighborhood
         for(int i = 0; i < m_n_B; ++i){
             std::sort(m_adj_list[i].begin(), m_adj_list[i].end());
+        }
+
+        for(int i = 0; i < m_n_A; ++i){
+            std::sort(m_adj_list_from_A[i].begin(), m_adj_list_from_A[i].end());
         }
     }
 
@@ -144,7 +167,7 @@ public:
      * @param permutation The m_permutation.
      * @return Number of cuts.
      */
-    int determine_n_cuts(std::vector<int> &permutation) {
+    inline int determine_n_cuts(std::vector<int> &permutation) {
         int n_cuts = 0;
         for (int i = 0; i < m_n_B; ++i) {
             for (int j = i + 1; j < m_n_B; ++j) {
@@ -169,7 +192,7 @@ public:
      * Prints the graph as an adjacency list. Only prints the adjacency of
      * movable nodes.
      */
-    void print() const {
+    inline void print() const {
         for(int i = 0; i < m_n_B; ++i) {
             std::cout << i << ": ";
             ::print(m_adj_list[i]);

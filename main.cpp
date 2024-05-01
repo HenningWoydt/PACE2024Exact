@@ -3,21 +3,10 @@
 
 #include "src/Graph.h"
 #include "src/Solver_BF.h"
-#include "src/GraphGenerator.h"
-#include "src/Solver.h"
+#include "src/ExhaustiveSolver.h"
 #include "src/misc.h"
-
-void generate_graphs(){
-    std::string dir_path = "../data/test/own/100";
-    std::filesystem::create_directories(dir_path);
-
-    for(size_t i = 0; i < 100; ++i){
-        std::string file_path = dir_path + "/" + std::to_string(i) + ".gr";
-        GraphGenerator gg(100, 100, {1, 2, 3, 4, 5});
-        gg.generate();
-        gg.write_to_file(file_path);
-    }
-}
+#include "src/Partitioner.h"
+#include "src/Solver.h"
 
 std::string convert(std::vector<int> &vec){
     if(vec.empty()){
@@ -34,20 +23,39 @@ std::string convert(std::vector<int> &vec){
 int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
-    Graph g(args[1]);
-    Solver s(g);
-    s.solve();
+    args = {"", "../data/test/medium_test_set/3.gr", "res.txt"};
+    // args = {"", "../data/test/test.gr", "res.txt"};
 
-    std::vector<int> solver_solution = s.get_solution();
-    int solver_n_cuts = g.determine_n_cuts(solver_solution);
-    double time = s.get_time();
+    {
+        Graph g(args[1]);
+        ExhaustiveSolver s(g);
+        s.solve();
 
-    if(!std::filesystem::exists(args[2])){
-        std::ofstream outfile(args[2]);
+        std::vector<int> solver_solution = s.get_solution();
+        int solver_n_cuts = g.determine_n_cuts(solver_solution);
+        print(solver_solution);
+        print(s.get_shifted_solution());
+        std::cout << solver_n_cuts << std::endl;
+        double time = s.get_time();
+
+        if (!std::filesystem::exists(args[2])) {
+            std::ofstream outfile(args[2]);
+        }
+
+        std::ofstream outfile(args[2], std::ios_base::app);
+        outfile << args[1] << ";" << convert(solver_solution) << ";" << solver_n_cuts << ";" << time << std::endl;
     }
 
-    std::ofstream outfile(args[2], std::ios_base::app);
-    outfile << args[1] << ";" << convert(solver_solution) << ";" << solver_n_cuts << ";" << time << std::endl;
+    {
+        Graph g(args[1]);
+        Solver s(g);
+        s.solve();
+        std::vector<int> sol = s.get_solution();
+        int solver_n_cuts = g.determine_n_cuts(sol);
+        print(sol);
+        print(s.get_shifted_solution());
+        std::cout << solver_n_cuts << std::endl;
+    }
 
     return 0;
 }

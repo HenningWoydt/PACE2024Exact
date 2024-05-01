@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "misc.h"
+#include "AlignedVector.h"
 
 /**
  * One candidate.
@@ -18,10 +19,13 @@ struct Candidate {
  */
 class CandidateManager{
 private:
-    int m_s_idx;
-    int m_e_idx;
+    int m_size;
 
-    std::vector<Candidate> m_candidates;
+    AlignedVector<Candidate> m_candidates;
+    AlignedVector<Candidate> m_candidates_help;
+
+    int m_max_gain = 0;
+    AlignedVector<int> m_counting;
 
 public:
     /**
@@ -30,36 +34,79 @@ public:
      * @param n Number of elements.
      */
     explicit CandidateManager(int n){
-        m_s_idx = 0;
-        m_e_idx = 0;
+        m_size = 0;
         m_candidates.resize(n);
+        m_candidates_help.resize(n);
     }
 
     /** vector like functions */
-    [[nodiscard]] inline Candidate operator[](size_t i) const {return m_candidates[i];}
-    [[nodiscard]] inline Candidate &operator[](size_t i) {return m_candidates[i];}
-    inline void push_back(Candidate entry) { m_candidates[m_e_idx] = entry; m_e_idx += 1; }
-    [[nodiscard]] inline size_t size() const { return m_e_idx - m_s_idx; }
-    [[nodiscard]] inline size_t get_end() const { return m_e_idx; }
-    inline void clear() { m_s_idx = 0; m_e_idx = 0; }
+    inline Candidate operator[](size_t i) const {
+        return m_candidates[i];
+    }
+
+    inline Candidate &operator[](size_t i) {
+        return m_candidates[i];
+    }
+
+    inline void push_back(Candidate entry) {
+        m_candidates[m_size] = entry;
+        m_size += 1;
+        m_max_gain = std::max(m_max_gain, entry.gain);
+    }
+
+    inline size_t size() const {
+        return m_size;
+    }
+
+    inline size_t get_end() const {
+        return m_size;
+    }
+
+    inline void clear() {
+        m_size = 0;
+        m_max_gain = 0;
+    }
 
     /**
      * Sorts the CandidateManager ascending.
      */
-    void sort(){
+    inline void sort(){
+        /*
         auto first = m_candidates.begin();
-        std::advance(first, m_s_idx);
-
         auto last = m_candidates.begin();
-        std::advance(last, m_e_idx);
+        std::advance(last, m_size);
 
         std::sort(first, last, [](const Candidate &a, const Candidate &b) {
             return a.gain < b.gain;
         });
+         */
+
+        // initialize counting
+        m_counting.resize(m_max_gain + 1);
+        std::fill(m_counting.begin(), m_counting.end(), 0);
+
+        // count
+        for(int i = 0; i < m_size; ++i){
+            m_counting[m_candidates[i].gain]++;
+        }
+
+        // prefix sum
+        for(int i = 1; i <= m_max_gain; ++i){
+            m_counting[i] += m_counting[i - 1];
+        }
+
+        // generate sorted output
+        for (int i = m_size - 1; i >= 0; i--){
+            m_candidates_help[m_counting[m_candidates[i].gain] - 1] = m_candidates[i];
+            m_counting[m_candidates[i].gain]--;
+        }
+
+        // sorted elements
+        m_candidates.swap(m_candidates_help);
     }
 
-    void print(){
-        for(int i = 0; i < m_e_idx; ++i){
+    inline void print(){
+        for(int i = 0; i < m_size; ++i){
             std::cout << "(" << m_candidates[i].c << " " << m_candidates[i].gain << "), ";
         }
         std::cout << std::endl;

@@ -28,8 +28,8 @@ bool file_exists(const std::string& file_path);
  * @tparam T Type of the vector.
  * @param vec The vector.
  */
-template<typename T>
-void print(const std::vector<T> &vec) {
+template<typename T, typename A>
+void print(const std::vector<T, A> &vec) {
     if (vec.empty()) {
         std::cout << "[]" << std::endl;
         return;

@@ -15,7 +15,7 @@ TEST(Own, T1) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -29,7 +29,7 @@ TEST(Own, T2) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -43,7 +43,7 @@ TEST(Own, T3) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -57,7 +57,7 @@ TEST(Own, T4) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -71,7 +71,7 @@ TEST(Own, T5) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -85,7 +85,7 @@ TEST(Own, T6) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -99,7 +99,7 @@ TEST(Own, T7) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -113,7 +113,7 @@ TEST(Own, T8) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -127,7 +127,7 @@ TEST(Own, T9) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -141,7 +141,7 @@ TEST(Own, T10) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -155,7 +155,7 @@ TEST(Own, T11) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -169,7 +169,7 @@ TEST(Own, T12) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -183,7 +183,7 @@ TEST(Own, T13) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -197,7 +197,7 @@ TEST(Own, T14) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -211,7 +211,7 @@ TEST(Own, T15) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -225,7 +225,7 @@ TEST(Own, T16) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -239,7 +239,7 @@ TEST(Own, T17) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -253,7 +253,7 @@ TEST(Own, T18) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -267,7 +267,7 @@ TEST(Own, T19) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -281,7 +281,7 @@ TEST(Own, T20) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -295,7 +295,7 @@ TEST(Own, T21) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -309,7 +309,7 @@ TEST(Own, T22) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -323,7 +323,7 @@ TEST(Own, T23) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -337,7 +337,7 @@ TEST(Own, T24) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -351,7 +351,7 @@ TEST(Own, T25) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -365,7 +365,7 @@ TEST(Own, T26) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -379,7 +379,7 @@ TEST(Own, T27) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -393,7 +393,7 @@ TEST(Own, T28) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -407,7 +407,7 @@ TEST(Own, T29) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -421,7 +421,7 @@ TEST(Own, T30) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -435,7 +435,7 @@ TEST(Own, T31) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -449,7 +449,7 @@ TEST(Own, T32) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -463,7 +463,7 @@ TEST(Own, T33) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -477,7 +477,7 @@ TEST(Own, T34) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -491,7 +491,7 @@ TEST(Own, T35) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -505,7 +505,7 @@ TEST(Own, T36) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -519,7 +519,7 @@ TEST(Own, T37) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -533,7 +533,7 @@ TEST(Own, T38) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -547,7 +547,7 @@ TEST(Own, T39) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -561,7 +561,7 @@ TEST(Own, T40) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -575,7 +575,7 @@ TEST(Own, T41) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -589,7 +589,7 @@ TEST(Own, T42) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -603,7 +603,7 @@ TEST(Own, T43) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -617,7 +617,7 @@ TEST(Own, T44) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -631,7 +631,7 @@ TEST(Own, T45) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -645,7 +645,7 @@ TEST(Own, T46) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -659,7 +659,7 @@ TEST(Own, T47) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -673,7 +673,7 @@ TEST(Own, T48) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -687,7 +687,7 @@ TEST(Own, T49) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }
@@ -701,7 +701,7 @@ TEST(Own, T50) {
             std::string sol_path = "../data/test/own/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
             if(file_exists(g_path)) {
-                compare_bf(g_path, sol_path);
+                compare_exhaustive(g_path, sol_path);
             }
         }
     }

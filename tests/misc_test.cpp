@@ -1,10 +1,13 @@
 #include "misc_test.h"
+#include "../src/Solver.h"
 
-void compare_bf(std::string &g_path, std::string &sol_path) {
+void compare_exhaustive(std::string &g_path, std::string &sol_path) {
     std::vector<int> solver_bf_solution;
+    std::vector<int> solver_exhaustive_solution;
     std::vector<int> solver_solution;
 
     int solver_bf_n_cuts;
+    int solver_exhaustive_n_cuts;
     int solver_n_cuts;
 
     {
@@ -22,12 +25,20 @@ void compare_bf(std::string &g_path, std::string &sol_path) {
     }
     {
         Graph g(g_path);
+        ExhaustiveSolver solver(g);
+        solver.solve();
+        solver_exhaustive_solution = solver.get_solution();
+        solver_exhaustive_n_cuts = g.determine_n_cuts(solver_exhaustive_solution);
+    }
+    {
+        Graph g(g_path);
         Solver solver(g);
         solver.solve();
         solver_solution = solver.get_solution();
-        solver_n_cuts = g.determine_n_cuts(solver_solution);
+        solver_n_cuts = g.determine_n_cuts(solver_exhaustive_solution);
     }
 
+    EXPECT_EQ(solver_exhaustive_n_cuts, solver_bf_n_cuts) << g_path << " " << sol_path << " " << to_string(solver_exhaustive_solution) << " " << to_string(solver_bf_solution);
     EXPECT_EQ(solver_n_cuts, solver_bf_n_cuts) << g_path << " " << sol_path << " " << to_string(solver_solution) << " " << to_string(solver_bf_solution);
 }
 
@@ -41,7 +52,7 @@ void compare(std::string &g_path, std::string &sol_path) {
 
     {
         Graph g(g_path);
-        Solver solver(g);
+        ExhaustiveSolver solver(g);
         solver.solve();
         solver_solution = solver.get_solution();
         solver_n_cuts = g.determine_n_cuts(solver_solution);

@@ -3,13 +3,15 @@
 
 #include <vector>
 
+#include "AlignedVector.h"
+
 /**
  * Class to hold a Minimum-Cross-Matrix.
  */
 class CrossMatrix {
 private:
     int m_n = 0;
-    std::vector<int> m_matrix;
+    AlignedVector<int> m_matrix;
 
 public:
 
@@ -35,7 +37,7 @@ public:
      * @param idx2 Index of second element.
      * @param val The value to insert.
      */
-    void set_entry(int idx1, int idx2, int val) {
+    inline void set_entry(int idx1, int idx2, int val) {
         m_matrix[idx1 * m_n + idx2] = val;
     }
 
@@ -46,14 +48,14 @@ public:
      * @param idx2 Index of the second element.
      * @return The value at the index.
      */
-    int get_entry(int idx1, int idx2) {
+    inline int get_entry(int idx1, int idx2) {
         return m_matrix[idx1 * m_n + idx2];
     }
 
     /**
      * Prints the matrix to the standard output.
      */
-    void print() {
+    inline void print() {
         for (int i = 0; i < m_n; ++i) {
             if (m_n == 0) {
                 std::cout << "[]" << std::endl;

@@ -49,7 +49,7 @@ public:
     /**
      * Determines the m_permutation, with the least number of cuts.
      */
-    void solve() {
+    inline void solve() {
         recursive_solve();
 
 #if BF_DEBUG
@@ -89,7 +89,7 @@ public:
      *
      * @return Permutation of B.
      */
-    [[nodiscard]] std::vector<int> get_solution() const {
+    inline std::vector<int> get_solution() const {
         std::vector<int> v(solution);
         return v;
     }
@@ -100,7 +100,7 @@ public:
      *
      * @return Permutation of B.
      */
-    [[nodiscard]] std::vector<int> get_shifted_solution() const {
+    inline std::vector<int> get_shifted_solution() const {
         std::vector<int> v(solution);
         for (auto &x: v) {
             x += graph.m_n_A + 1;
@@ -115,7 +115,7 @@ private:
      *
      * @return Number of cuts.
      */
-    int count_cuts() {
+    inline int count_cuts() {
         int n_cuts = 0;
         for (int i = 0; i < curr_size; ++i) {
             for (int j = i + 1; j < curr_size; ++j) {
@@ -139,7 +139,7 @@ private:
     /**
      * Recursively searches the permutation tree.
      */
-    void recursive_solve() {
+    inline void recursive_solve() {
         if (curr_size == graph.m_n_B) {
 #if BF_DEBUG
             // add found m_permutation

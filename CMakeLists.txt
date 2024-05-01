@@ -19,33 +19,33 @@ add_executable(PACE2024Exact
         main.cpp
         src/CandidateManager.h
         src/Graph.h
-        src/GraphGenerator.h
         src/CrossMatrix.h
         src/misc.cpp
         src/misc.h
-        src/Solver.h
-        src/Solver_BF.h)
+        src/ExhaustiveSolver.h
+        src/Solver_BF.h
+        src/AlignedVector.h
+        src/Partitioner.h
+        src/TranslationTable.h
+        src/Solver.h)
 
 add_executable(PACE2024Exact_test
         src/CandidateManager.h
         src/Graph.h
-        src/GraphGenerator.h
         src/CrossMatrix.h
         src/misc.cpp
         src/misc.h
-        src/Solver.h
+        src/ExhaustiveSolver.h
         src/Solver_BF.h
         tests/medium_test.cpp
         tests/misc_test.cpp
         tests/misc_test.h
         tests/tiny_test.cpp
-        tests/own_test.cpp)
-
-find_package(OpenMP)
-if (OpenMP_CXX_FOUND)
-    target_link_libraries(PACE2024Exact OpenMP::OpenMP_CXX)
-    target_link_libraries(PACE2024Exact_test OpenMP::OpenMP_CXX)
-endif ()
+        tests/own_test.cpp
+        src/AlignedVector.h
+        src/Partitioner.h
+        src/TranslationTable.h
+        src/Solver.h)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)
