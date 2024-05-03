@@ -139,7 +139,7 @@ public:
      * @return Time in seconds.
      */
     inline double get_time() const {
-        return (double) ((double) std::chrono::duration_cast<std::chrono::nanoseconds>(ep - sp).count() / 1000000000.0);
+        return get_elapsed_seconds(sp, ep);
     }
 
 private:
@@ -389,9 +389,9 @@ private:
      */
     inline int calculate_intraMinCuts(int depth) {
         int n_cuts = 0;
+        int c2 = m_permutation[depth - 1];
         for (size_t i = 0; i < m_candidate_order[depth].get_end(); ++i) {
             int c1 = m_candidate_order[depth][i].c;
-            int c2 = m_permutation[depth - 1];
 
             n_cuts += std::min(m_cross_matrix.get_entry(c1, c2), m_cross_matrix.get_entry(c2, c1));
         }

@@ -27,7 +27,8 @@ add_executable(PACE2024Exact
         src/AlignedVector.h
         src/Partitioner.h
         src/TranslationTable.h
-        src/Solver.h)
+        src/Solver.h
+        src/Reducer.h)
 
 add_executable(PACE2024Exact_test
         src/CandidateManager.h
@@ -45,7 +46,8 @@ add_executable(PACE2024Exact_test
         src/AlignedVector.h
         src/Partitioner.h
         src/TranslationTable.h
-        src/Solver.h)
+        src/Solver.h
+        src/Reducer.h)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

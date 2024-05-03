@@ -17,7 +17,7 @@ struct Candidate {
 /**
  * Class to manage the candidates.
  */
-class CandidateManager{
+class CandidateManager {
 private:
     int m_size;
 
@@ -33,7 +33,7 @@ public:
      *
      * @param n Number of elements.
      */
-    explicit CandidateManager(int n){
+    explicit CandidateManager(int n) {
         m_size = 0;
         m_candidates.resize(n);
         m_candidates_help.resize(n);
@@ -70,7 +70,7 @@ public:
     /**
      * Sorts the CandidateManager ascending.
      */
-    inline void sort(){
+    inline void sort() {
         /*
         auto first = m_candidates.begin();
         auto last = m_candidates.begin();
@@ -86,17 +86,17 @@ public:
         std::fill(m_counting.begin(), m_counting.end(), 0);
 
         // count
-        for(int i = 0; i < m_size; ++i){
+        for (int i = 0; i < m_size; ++i) {
             m_counting[m_candidates[i].gain]++;
         }
 
         // prefix sum
-        for(int i = 1; i <= m_max_gain; ++i){
+        for (int i = 1; i <= m_max_gain; ++i) {
             m_counting[i] += m_counting[i - 1];
         }
 
         // generate sorted output
-        for (int i = m_size - 1; i >= 0; i--){
+        for (int i = m_size - 1; i >= 0; i--) {
             m_candidates_help[m_counting[m_candidates[i].gain] - 1] = m_candidates[i];
             m_counting[m_candidates[i].gain]--;
         }
@@ -105,8 +105,8 @@ public:
         m_candidates.swap(m_candidates_help);
     }
 
-    inline void print(){
-        for(int i = 0; i < m_size; ++i){
+    inline void print() {
+        for (int i = 0; i < m_size; ++i) {
             std::cout << "(" << m_candidates[i].c << " " << m_candidates[i].gain << "), ";
         }
         std::cout << std::endl;

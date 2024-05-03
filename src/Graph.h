@@ -53,27 +53,27 @@ public:
                 size_t i = 6;
 
                 // read in n_A
-                while(line[i] != ' '){
+                while (line[i] != ' ') {
                     m_n_A = m_n_A * 10 + line[i] - '0';
                     i += 1;
                 }
                 i += 1;
 
                 // read in n_B
-                while(line[i] != ' '){
+                while (line[i] != ' ') {
                     m_n_B = m_n_B * 10 + line[i] - '0';
                     i += 1;
                 }
 
                 // adjacency list for vertices of A
                 m_adj_list_from_A.resize(m_n_A);
-                for(int j = 0; j < m_n_A; ++j){
+                for (int j = 0; j < m_n_A; ++j) {
                     m_adj_list_from_A[j].reserve(16);
                 }
 
                 // adjacency list for vertices of B
                 m_adj_list.resize(m_n_B);
-                for(int j = 0; j < m_n_B; ++j){
+                for (int j = 0; j < m_n_B; ++j) {
                     m_adj_list[j].reserve(16);
                 }
                 break;
@@ -87,7 +87,7 @@ public:
                 size_t i = 0;
 
                 // read in vertex a
-                while(line[i] != ' '){
+                while (line[i] != ' ') {
                     a = a * 10 + line[i] - '0';
                     i += 1;
                 }
@@ -95,7 +95,7 @@ public:
                 i += 1;
 
                 // read in vertex b
-                while(i < line.size()){
+                while (i < line.size()) {
                     b = b * 10 + line[i] - '0';
                     i += 1;
                 }
@@ -118,7 +118,7 @@ public:
      * @param n_A Number of fixed vertices.
      * @param n_B Number of movable vertices.
      */
-    Graph(int n_A, int n_B){
+    Graph(int n_A, int n_B) {
         m_n_A = n_A;
         m_n_B = n_B;
         m_n_edges = 0;
@@ -127,7 +127,7 @@ public:
         m_adj_list_from_A.resize(m_n_A);
     }
 
-    Graph(){
+    Graph() {
         m_n_A = 0;
         m_n_B = 0;
         m_n_edges = 0;
@@ -140,7 +140,7 @@ public:
      * @param a Vertex a (fixed vertex).
      * @param b Vertex b (movable vertex).
      */
-    inline void add_edge(int a, int b){
+    inline void add_edge(int a, int b) {
         m_n_edges += 1;
         m_adj_list[b].push_back(a);
         m_adj_list_from_A[a].push_back(b);
@@ -149,13 +149,13 @@ public:
     /**
      * Sorts each neighborhood ascending.
      */
-    inline void sort_neighborhoods(){
+    inline void sort_neighborhoods() {
         // sort each neighborhood
-        for(int i = 0; i < m_n_B; ++i){
+        for (int i = 0; i < m_n_B; ++i) {
             std::sort(m_adj_list[i].begin(), m_adj_list[i].end());
         }
 
-        for(int i = 0; i < m_n_A; ++i){
+        for (int i = 0; i < m_n_A; ++i) {
             std::sort(m_adj_list_from_A[i].begin(), m_adj_list_from_A[i].end());
         }
     }
@@ -193,7 +193,7 @@ public:
      * movable nodes.
      */
     inline void print() const {
-        for(int i = 0; i < m_n_B; ++i) {
+        for (int i = 0; i < m_n_B; ++i) {
             std::cout << i << ": ";
             ::print(m_adj_list[i]);
         }

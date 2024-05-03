@@ -12,7 +12,7 @@ void compare_exhaustive(std::string &g_path, std::string &sol_path) {
 
     {
         Graph g(g_path);
-        if (file_exists(sol_path)){
+        if (file_exists(sol_path)) {
             solver_bf_solution = read_solution(sol_path, g.m_n_A + 1);
         } else {
             Solver_BF solver_bf(g);
@@ -43,7 +43,7 @@ void compare_exhaustive(std::string &g_path, std::string &sol_path) {
 }
 
 void compare(std::string &g_path, std::string &sol_path) {
-    return;
+    // return;
     std::vector<int> solver_solution;
     std::vector<int> real_solution;
 
@@ -52,7 +52,7 @@ void compare(std::string &g_path, std::string &sol_path) {
 
     {
         Graph g(g_path);
-        ExhaustiveSolver solver(g);
+        Solver solver(g);
         solver.solve();
         solver_solution = solver.get_solution();
         solver_n_cuts = g.determine_n_cuts(solver_solution);

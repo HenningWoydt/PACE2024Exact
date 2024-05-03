@@ -19,7 +19,7 @@
  * @param file_path Path to the file.
  * @return True if file exists, False else.
  */
-bool file_exists(const std::string& file_path);
+bool file_exists(const std::string &file_path);
 
 /**
  * Prints the content of a vector in a Numpy-style way. The '<<' operator must
@@ -50,7 +50,7 @@ void print(const std::vector<T, A> &vec) {
  * @param vec The vector.
  */
 template<typename T>
-std::string to_string(const std::vector<T> &vec){
+std::string to_string(const std::vector<T> &vec) {
     if (vec.empty()) {
         return "[]";
     }

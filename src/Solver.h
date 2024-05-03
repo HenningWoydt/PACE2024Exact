@@ -4,12 +4,19 @@
 #include "Graph.h"
 #include "Partitioner.h"
 #include "ExhaustiveSolver.h"
+#include "Reducer.h"
 
+/**
+ * Class to solve the problem.
+ */
 class Solver {
-
-    const Graph m_graph;
-
+private:
+    const Graph &m_graph;
     std::vector<int> m_solution;
+
+    // timings
+    std::chrono::steady_clock::time_point sp;
+    std::chrono::steady_clock::time_point ep;
 
 public:
     /**
@@ -17,48 +24,54 @@ public:
      *
      * @param g The graph.
      */
-    explicit Solver(Graph &g) : m_graph(g) {}
+    explicit Solver(const Graph &g) : m_graph(g) {}
 
-    void solve(){
-        m_solution.clear();
-        m_solution.reserve(m_graph.m_n_B);
+    /**
+     * Solves the problem.
+     */
+    void solve() {
+        sp = std::chrono::steady_clock::now();
 
         // find components of the graph
         Partitioner partitioner(m_graph);
         partitioner.find_components();
 
-        // determine the component order
-        Graph partition_g = partitioner.get_partition_graph();
-        ExhaustiveSolver partition_solver(partition_g);
-        partition_solver.solve();
-        std::vector<int> partition_order = partition_solver.get_solution();
-        partitioner.reorder(partition_order);
+        std::cout << "n_components = " << partitioner.m_n_components << std::endl;
 
-        for(int i = 0; i < partitioner.m_n_partitions; ++i){
-            std::cout << "i = " << i << std::endl;
-            print(partitioner.m_components_A[i]);
-            print(partitioner.m_components_B[i]);
-        }
+        // determine the component order
+        Graph partition_g = partitioner.get_component_graph();
+        ExhaustiveSolver component_solver(partition_g);
+        component_solver.solve();
+        std::vector<int> component_order = component_solver.get_solution();
 
         // solve each component
-        for(int i = 0; i < partitioner.m_n_partitions; ++i){
-            Graph g = partitioner.m_sub_graphs[i];
-            TranslationTable tt = partitioner.m_translation_tables[i];
-
+        std::vector<std::vector<int>> solutions;
+        for (auto &g: partitioner.get_components()) {
             // solve sub-graph
+
+            // Reducer reducer(g);
+            // Graph reduced_g = reducer.reduce();
+
             ExhaustiveSolver s(g);
             s.solve();
-            std::vector<int> part_solution = s.get_solution();
+            std::vector<int> exhaustive_sol = s.get_solution();
 
-            // put the partial solution into the complete solution
-            for(size_t j = 0; j < part_solution.size(); ++j){
-                int vertex_tt = tt.get_B_old(part_solution[j]);
-                m_solution.push_back(vertex_tt);
-            }
+            // std::vector<int> reduced_sol = reducer.back_propagate(exhaustive_sol);
+
+            solutions.push_back(exhaustive_sol);
         }
+
+        m_solution = partitioner.back_propagate(solutions, component_order);
+
+        ep = std::chrono::steady_clock::now();
     }
 
-    std::vector<int> get_solution(){
+    /**
+     * Returns the solution.
+     *
+     * @return The solution.
+     */
+    std::vector<int> get_solution() {
         std::vector<int> sol(m_solution);
         return sol;
     }
@@ -76,6 +89,10 @@ public:
             x += m_graph.m_n_A + 1;
         }
         return v;
+    }
+
+    double get_time(){
+        return get_elapsed_seconds(sp, ep);
     }
 };
 

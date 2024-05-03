@@ -8,12 +8,12 @@
 #include "src/Partitioner.h"
 #include "src/Solver.h"
 
-std::string convert(std::vector<int> &vec){
-    if(vec.empty()){
+std::string convert(std::vector<int> &vec) {
+    if (vec.empty()) {
         return "[]";
     }
     std::string s = "[";
-    for(size_t i = 0; i < vec.size() - 1; ++i){
+    for (size_t i = 0; i < vec.size() - 1; ++i) {
         s += std::to_string(vec[i]) + ", ";
     }
     s += std::to_string(vec.back()) + "]";
@@ -23,30 +23,28 @@ std::string convert(std::vector<int> &vec){
 int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
-    args = {"", "../data/test/medium_test_set/3.gr", "res.txt"};
+    args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
     // args = {"", "../data/test/test.gr", "res.txt"};
 
     {
-        Graph g(args[1]);
-        ExhaustiveSolver s(g);
-        s.solve();
+        // Graph g(args[1]);
+        // ExhaustiveSolver s(g);
+        // s.solve();
 
-        std::vector<int> solver_solution = s.get_solution();
-        int solver_n_cuts = g.determine_n_cuts(solver_solution);
-        print(solver_solution);
-        print(s.get_shifted_solution());
-        std::cout << solver_n_cuts << std::endl;
-        double time = s.get_time();
+        // std::vector<int> solver_solution = s.get_solution();
+        // int solver_n_cuts = g.determine_n_cuts(solver_solution);
+        // print(solver_solution);
+        // print(s.get_shifted_solution());
+        // std::cout << solver_n_cuts << std::endl;
+        // double time = s.get_time();
 
-        if (!std::filesystem::exists(args[2])) {
-            std::ofstream outfile(args[2]);
-        }
-
-        std::ofstream outfile(args[2], std::ios_base::app);
-        outfile << args[1] << ";" << convert(solver_solution) << ";" << solver_n_cuts << ";" << time << std::endl;
+        // if (!std::filesystem::exists(args[2])) {
+        //     std::ofstream outfile(args[2]);
+        // }
     }
 
     {
+
         Graph g(args[1]);
         Solver s(g);
         s.solve();
@@ -55,6 +53,13 @@ int main(int argc, char *argv[]) {
         print(sol);
         print(s.get_shifted_solution());
         std::cout << solver_n_cuts << std::endl;
+        double time = s.get_time();
+
+        if (!std::filesystem::exists(args[2])) {
+            std::ofstream outfile(args[2]);
+        }
+        std::ofstream outfile(args[2], std::ios_base::app);
+        outfile << args[1] << ";" << convert(sol) << ";" << solver_n_cuts << ";" << time << std::endl;
     }
 
     return 0;

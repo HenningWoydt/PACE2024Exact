@@ -1,10 +1,10 @@
 .idea
 
-build
-cmake-build-debug
-cmake-build-release
+build/*
+cmake-build-debug/*
+cmake-build-release/*
 
-data/test/own
+data/test/own/*
 
 experiments/log.txt
 experiments/res.txt
