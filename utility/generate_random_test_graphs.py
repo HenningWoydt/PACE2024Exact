@@ -1,16 +1,22 @@
 import os
 import random
 
+FILE_DIR = "../data/test/own/random"
+MAX_A = 50
+MAX_B = 10
+N_FILES = 1000
 
-def generate_graph(n_a: int, n_b: int, path: str) -> None:
+
+def generate_random_graph(n_a: int, n_b: int, path: str) -> None:
     """
-    Generates a bipartite graph.
+    Generates a random bipartite graph.
 
     :param n_a: Number of nodes in A.
     :param n_b: Number of nodes in B.
     :param path: Path to store the graph.
     :return: None
     """
+    # generate random edges
     edges = []
     for i in range(n_a):
         vertex_a = i + 1
@@ -22,6 +28,7 @@ def generate_graph(n_a: int, n_b: int, path: str) -> None:
             if (vertex_a, vertex_b) not in edges:
                 edges.append((vertex_a, vertex_b))
 
+    # write content to file
     content = ""
     content += f"p ocr {n_a} {n_b} {len(edges)}\n"
     for (vertex_a, vertex_b) in edges:
@@ -32,34 +39,33 @@ def generate_graph(n_a: int, n_b: int, path: str) -> None:
     f.close()
 
 
-def generate_test() -> None:
+def generate_random_tests() -> None:
     """
-    Generates a test set.
+    Generates the random test set.
 
     :return: None
     """
-    for i in range(1, 51):
-        for j in range(1, 11):
-            file_dir = f"../data/test/own/{i}_{j}"
-            sol_file_dir = f"../data/test/own/{i}_{j}-sol"
+    for n_A in range(1, MAX_A + 1):
+        for n_B in range(1, MAX_B + 1):
+            file_dir = f"{FILE_DIR}/{n_A}_{n_B}"
+            sol_file_dir = f"{FILE_DIR}/{n_A}_{n_B}-sol"
             os.makedirs(file_dir, exist_ok=True)
             os.makedirs(sol_file_dir, exist_ok=True)
-            for k in range(1000):
-                file_path = f"{file_dir}/{k}.gr"
+            for file_id in range(N_FILES):
+                file_path = f"{file_dir}/{file_id}.gr"
                 if not os.path.exists(file_path):
-                    generate_graph(i, j, file_path)
+                    generate_random_graph(n_A, n_B, file_path)
 
 
 def main() -> None:
     """
-    Generates all test sets.
+    Generates all random test sets.
 
     :return: None
     """
-    file_dir = f"../data/test/own"
-    os.makedirs(file_dir, exist_ok=True)
+    os.makedirs(FILE_DIR, exist_ok=True)
 
-    generate_test()
+    generate_random_tests()
 
 
 if __name__ == "__main__":

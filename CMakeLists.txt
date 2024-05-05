@@ -42,12 +42,14 @@ add_executable(PACE2024Exact_test
         tests/misc_test.cpp
         tests/misc_test.h
         tests/tiny_test.cpp
-        tests/own_test.cpp
+        tests/own_random_test.cpp
         src/AlignedVector.h
         src/Partitioner.h
         src/TranslationTable.h
         src/Solver.h
-        src/Reducer.h)
+        src/Reducer.h
+        tests/own_partition_test.cpp
+        tests/own_reduction_twins_test.cpp)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

@@ -23,7 +23,7 @@ std::string convert(std::vector<int> &vec) {
 int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
-    args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
+    // args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
     // args = {"", "../data/test/test.gr", "res.txt"};
 
     {
@@ -44,15 +44,14 @@ int main(int argc, char *argv[]) {
     }
 
     {
-
         Graph g(args[1]);
         Solver s(g);
         s.solve();
         std::vector<int> sol = s.get_solution();
         int solver_n_cuts = g.determine_n_cuts(sol);
-        print(sol);
-        print(s.get_shifted_solution());
-        std::cout << solver_n_cuts << std::endl;
+        // print(sol);
+        // print(s.get_shifted_solution());
+        // std::cout << solver_n_cuts << std::endl;
         double time = s.get_time();
 
         if (!std::filesystem::exists(args[2])) {

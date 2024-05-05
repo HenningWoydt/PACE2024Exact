@@ -31,14 +31,19 @@ private:
     AlignedVector<Retraction> m_retraction_order;
     TranslationTable m_tt_twins_plus;
 
+    // Configuration
+    bool m_twins_enabled;
+    bool m_twins_plus_enabled;
+
 public:
     /**
      * Default constructor.
      *
      * @param g The graph.
      */
-    explicit Reducer(const Graph &g) : m_graph(g) {
-
+    explicit Reducer(const Graph &g, bool twins_enabled, bool twins_plus_enabled) : m_graph(g) {
+        m_twins_enabled = twins_enabled;
+        m_twins_plus_enabled = twins_plus_enabled;
     }
 
     /**
@@ -47,13 +52,19 @@ public:
      * @return The newly reduced graph.
      */
     Graph reduce() {
-        find_twins(m_graph);
-        Graph twin_free_g = reduce_twins(m_graph);
+        Graph g = m_graph;
 
-        find_twins_plus(twin_free_g);
-        Graph twin_plus_free_graph = reduce_twins_plus(twin_free_g);
+        if(m_twins_enabled) {
+            find_twins(g);
+            g = reduce_twins(g);
+        }
 
-        return twin_plus_free_graph;
+        if(m_twins_plus_enabled){
+            find_twins_plus(g);
+            g = reduce_twins_plus(g);
+        }
+
+        return g;
     }
 
     /**
@@ -64,9 +75,17 @@ public:
      * @return The solution to the original graph.
      */
     std::vector<int> back_propagate(const std::vector<int> &sol) {
-        std::vector<int> sol_twins_plus = back_propagate_twins_plus(sol);
-        std::vector<int> sol_twins = back_propagate_twins(sol_twins_plus);
-        return sol_twins;
+        std::vector<int> new_sol = sol;
+
+        if(m_twins_plus_enabled){
+            new_sol = back_propagate_twins_plus(new_sol);
+        }
+
+        if (m_twins_enabled){
+            new_sol = back_propagate_twins(new_sol);
+        }
+
+        return new_sol;
     }
 
 private:
@@ -83,17 +102,21 @@ private:
                     // found a twin
 
                     // check if at least one of the twins already exists in another set
+                    bool twins_found = false;
                     for (auto &twins: m_twins) {
                         if (FIND(twins, i) || FIND(twins, j)) {
                             // found a twin, insert the items
                             twins.push_back(i);
                             twins.push_back(j);
+                            twins_found = true;
                             break;
                         }
                     }
 
-                    // did not find, create new twin
-                    m_twins.push_back({i, j});
+                    if(!twins_found) {
+                        // did not find, create new twin
+                        m_twins.push_back({i, j});
+                    }
                 }
             }
         }

@@ -58,17 +58,12 @@ public:
         std::vector<int> new_sol;
 
         for (size_t i = 0; i < order.size(); ++i) {
-            for (size_t j = 0; j < order.size(); ++j) {
-                if ((int) i == order[j]) {
+            int id = order[i];
 
-                    std::vector<int> back_sol = back_propagate(sols[j], m_translation_tables[j]);
+            std::vector<int> back_sol = back_propagate(sols[id], m_translation_tables[id]);
 
-                    for (int x: back_sol) {
-                        new_sol.push_back(x);
-                    }
-
-                    break;
-                }
+            for (int x: back_sol) {
+                new_sol.push_back(x);
             }
         }
 
@@ -106,10 +101,11 @@ private:
         int id = 0;
 
         for (int i = 0; i < m_graph.m_n_B; ++i) {
-            int vertex_a_min = m_graph.m_n_B;
-            int vertex_a_max = 0;
             if (m_component_id[i] == -1) {
                 queue.push_back(i);
+
+                int vertex_a_min = m_graph.m_n_A;
+                int vertex_a_max = 0;
 
                 while (!queue.empty()) {
                     int vertex_b = queue.back();
@@ -124,17 +120,20 @@ private:
                             // insert all B vertices that are connected via vertex A
                             for (size_t k = 0; k < m_graph.m_adj_list_from_A[vertex_a].size(); ++k) {
                                 int next_vertex_b = m_graph.m_adj_list_from_A[vertex_a][k];
-                                queue.push_back(next_vertex_b);
-                            }
-
-                            // insert all B vertices that are connected to a vertex a that is between [a_min, a_max].
-                            for (vertex_a = vertex_a_min; vertex_a <= vertex_a_max; ++vertex_a) {
-                                for (size_t k = 0; k < m_graph.m_adj_list_from_A[vertex_a].size(); ++k) {
-                                    int next_vertex_b = m_graph.m_adj_list_from_A[vertex_a][k];
+                                if (m_component_id[next_vertex_b] == -1) {
                                     queue.push_back(next_vertex_b);
                                 }
                             }
                         }
+                        for (int vertex_a = vertex_a_min; vertex_a <= vertex_a_max; ++vertex_a) {
+                            for (size_t k = 0; k < m_graph.m_adj_list_from_A[vertex_a].size(); ++k) {
+                                int next_vertex_b = m_graph.m_adj_list_from_A[vertex_a][k];
+                                if (m_component_id[next_vertex_b] == -1) {
+                                    queue.push_back(next_vertex_b);
+                                }
+                            }
+                        }
+
                         m_component_id[vertex_b] = id;
                     }
                 }
