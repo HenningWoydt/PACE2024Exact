@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) {
     }
 
     {
-        Graph g(args[1]);
-        Solver s(g);
+        CrossGuard::Graph g(args[1]);
+        CrossGuard::Solver s(g);
         s.solve();
         std::vector<int> sol = s.get_solution();
         int solver_n_cuts = g.determine_n_cuts(sol);
