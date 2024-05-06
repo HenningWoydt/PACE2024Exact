@@ -3,9 +3,9 @@ import random
 from typing import List
 
 FILE_DIR = "../data/test/own/reduction_twins"
-MAX_A = 10
+MAX_A = 50
 MAX_B = 10
-N_FILES = 5
+N_FILES = 50
 N_REDUCTIONS = [1, 2, 3, 4, 5]
 
 
