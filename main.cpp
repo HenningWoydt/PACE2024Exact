@@ -24,34 +24,60 @@ int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
     // args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
-    // args = {"", "../data/test/test.gr", "res.txt"};
+    args = {"", "../data/test/own/reduction_twins/4/9_6/2.gr", "res.txt"};
 
     {
-        // Graph g(args[1]);
-        // ExhaustiveSolver s(g);
-        // s.solve();
+        std::cout << std::endl;
+        CrossGuard::Graph g(args[1]);
+        CrossGuard::Solver_BF s(g);
+        s.solve();
 
-        // std::vector<int> solver_solution = s.get_solution();
-        // int solver_n_cuts = g.determine_n_cuts(solver_solution);
-        // print(solver_solution);
-        // print(s.get_shifted_solution());
-        // std::cout << solver_n_cuts << std::endl;
-        // double time = s.get_time();
-
-        // if (!std::filesystem::exists(args[2])) {
-        //     std::ofstream outfile(args[2]);
-        // }
+        std::vector<int> solver_solution = s.get_solution();
+        int solver_n_cuts = g.determine_n_cuts(solver_solution);
+        CrossGuard::print(solver_solution);
+        std::cout << solver_n_cuts << std::endl;
     }
 
     {
+        std::cout << std::endl;
+        CrossGuard::Graph g(args[1]);
+        CrossGuard::ExhaustiveSolver s(g);
+        s.solve();
+
+        std::vector<int> solver_solution = s.get_solution();
+        int solver_n_cuts = g.determine_n_cuts(solver_solution);
+        CrossGuard::print(solver_solution);
+        std::cout << solver_n_cuts << std::endl;
+    }
+
+    {
+        std::cout << std::endl;
+        CrossGuard::Graph g(args[1]);
+
+        CrossGuard::Reducer reducer(g, true, false);
+        CrossGuard::Graph reduced_g = reducer.reduce();
+
+        std::cout << "n = " << reduced_g.m_n_B << std::endl;
+
+        CrossGuard::ExhaustiveSolver s(reduced_g);
+        s.solve();
+        std::vector<int> exhaustive_sol = s.get_solution();
+        std::vector<int> sol = reducer.back_propagate(exhaustive_sol);
+        int n_cuts = g.determine_n_cuts(sol);
+
+        CrossGuard::print(sol);
+        std::cout << n_cuts << std::endl;
+    }
+
+    {
+        std::cout << std::endl;
         CrossGuard::Graph g(args[1]);
         CrossGuard::Solver s(g);
         s.solve();
         std::vector<int> sol = s.get_solution();
         int solver_n_cuts = g.determine_n_cuts(sol);
-        // print(sol);
-        // print(s.get_shifted_solution());
-        // std::cout << solver_n_cuts << std::endl;
+        CrossGuard::print(sol);
+        std::cout << solver_n_cuts << std::endl;
         double time = s.get_time();
 
         if (!std::filesystem::exists(args[2])) {
