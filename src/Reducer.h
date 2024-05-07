@@ -3,39 +3,43 @@
 
 #include <numeric>
 #include <ranges>
+#include <utility>
 #include "Graph.h"
 #include "AlignedVector.h"
 #include "TranslationTable.h"
+#include "macros.h"
 
 namespace CrossGuard {
 
-#define FIND(vec, x) (std::find(vec.begin(), vec.end(), x) != vec.end())
-
+    /*
     struct Retraction {
         int left;
         int right;
         int keep;
     };
+     */
 
 /**
  * Uses reduction rules to decrease the size of an instance.
  */
     class Reducer {
     private:
-        const Graph &m_graph;
+        const Graph m_graph;
 
         // Variables for Twins
         AlignedVector<AlignedVector<int>> m_twins;
         TranslationTable m_tt_twins;
 
         // Variables for Twins+
+        /*
         AlignedVector<AlignedVector<int>> m_twins_plus;
         AlignedVector<Retraction> m_retraction_order;
         TranslationTable m_tt_twins_plus;
+         */
 
         // Configuration
         bool m_twins_enabled;
-        bool m_twins_plus_enabled;
+        // bool m_twins_plus_enabled = false;
 
     public:
         /**
@@ -43,9 +47,9 @@ namespace CrossGuard {
          *
          * @param g The graph.
          */
-        explicit Reducer(const Graph &g, bool twins_enabled, bool twins_plus_enabled) : m_graph(g) {
+        explicit Reducer(Graph g, bool twins_enabled /*, bool twins_plus_enabled*/) : m_graph(std::move(g)) {
             m_twins_enabled = twins_enabled;
-            m_twins_plus_enabled = twins_plus_enabled;
+            // m_twins_plus_enabled = twins_plus_enabled;
         }
 
         /**
@@ -61,10 +65,12 @@ namespace CrossGuard {
                 g = reduce_twins(g);
             }
 
+            /*
             if (m_twins_plus_enabled) {
                 find_twins_plus(g);
                 g = reduce_twins_plus(g);
             }
+             */
 
             return g;
         }
@@ -79,9 +85,11 @@ namespace CrossGuard {
         std::vector<int> back_propagate(const std::vector<int> &sol) {
             std::vector<int> new_sol = sol;
 
+            /*
             if (m_twins_plus_enabled) {
                 new_sol = back_propagate_twins_plus(new_sol);
             }
+             */
 
             if (m_twins_enabled) {
                 new_sol = back_propagate_twins(new_sol);
@@ -100,13 +108,13 @@ namespace CrossGuard {
         void find_twins(const Graph &g) {
             for (int i = 0; i < g.m_n_B; ++i) {
                 for (int j = i + 1; j < g.m_n_B; ++j) {
-                    if (g.m_adj_list[i] == g.m_adj_list[j]) {
+                    if (equal(g.m_adj_list[i], g.m_adj_list[j]) && !g.m_adj_list[i].empty()) {
                         // found a twin
 
                         // check if at least one of the twins already exists in another set
                         bool twins_found = false;
                         for (auto &twins: m_twins) {
-                            if (FIND(twins, i) || FIND(twins, j)) {
+                            if (exists(twins, i) || exists(twins, j)) {
                                 // found a twin, insert the items
                                 twins.push_back(i);
                                 twins.push_back(j);
@@ -128,6 +136,22 @@ namespace CrossGuard {
                 std::sort(twins.begin(), twins.end());
                 twins.erase(std::unique(twins.begin(), twins.end()), twins.end());
             }
+
+            for (auto &twins: m_twins) {
+                ASSERT(std::is_sorted(twins.begin(), twins.end()));
+                ASSERT(no_duplicates(twins));
+                ASSERT(twins.size() >= 2);
+            }
+            ASSERT(no_duplicates(m_twins));
+
+            for(size_t i = 0; i < m_twins.size(); ++i){
+                for(size_t j = i + 1; j < m_twins.size(); ++j){
+                    for(size_t k = 0; k < m_twins[i].size(); ++k){
+                        ASSERT(!exists(m_twins[j], m_twins[i][k]));
+                    }
+                }
+            }
+
         }
 
         /**
@@ -140,9 +164,10 @@ namespace CrossGuard {
             int n_A = g.m_n_A;
             int n_B = g.m_n_B;
 
+
             // adjust the new number of vertices in B
-            for (const auto &m_twin: m_twins) {
-                n_B += (-((int) m_twin.size()) + 1);
+            for (const auto &twins: m_twins) {
+                n_B = n_B - ((int) twins.size()) + 1;
             }
 
             Graph new_g(n_A, n_B);
@@ -155,12 +180,14 @@ namespace CrossGuard {
                 bool vertex_found = false;
                 bool vertex_smallest = false;
                 for (auto &twins: m_twins) {
-                    if (FIND(twins, vertex_b)) {
+
+                    ASSERT(std::is_sorted(twins.begin(), twins.end()));
+                    ASSERT(no_duplicates(twins));
+                    ASSERT(twins.size() >= 2);
+
+                    if (exists(twins, vertex_b)) {
                         vertex_found = true;
-                        if (vertex_b == *std::min(twins.begin(), twins.end())) {
-                            vertex_smallest = true;
-                        }
-                        break;
+                        vertex_smallest = (vertex_b == min(twins));
                     }
                 }
 
@@ -190,17 +217,23 @@ namespace CrossGuard {
             for (int vertex: sol) {
                 int old_vertex = m_tt_twins.get_B_old(vertex);
 
-                new_sol.push_back(old_vertex);
-
                 // check if vertex belongs to a twin, and if it is the smallest vertex
+                bool is_twin = false;
                 for (auto &twins: m_twins) {
-                    if (FIND(twins, old_vertex)) {
+
+                    ASSERT(std::is_sorted(twins.begin(), twins.end()));
+                    ASSERT(no_duplicates(twins));
+                    ASSERT(twins.size() >= 2);
+
+                    if (exists(twins, old_vertex)) {
                         // insert the whole twin
-                        for (size_t i = 1; i < twins.size(); ++i) {
-                            new_sol.push_back(twins[i]);
-                        }
-                        break;
+                        is_twin = true;
+                        for (int twin : twins) { new_sol.push_back(twin); }
                     }
+                }
+
+                if(!is_twin){
+                    new_sol.push_back(old_vertex);
                 }
             }
 
@@ -216,6 +249,7 @@ namespace CrossGuard {
          *
          * @param g The graph.
          */
+        /*
         void find_twins_plus(const Graph &g) {
             AlignedVector<int> retraction_pairs;
             for (int i = 0; i < g.m_n_B; ++i) {
@@ -333,6 +367,7 @@ namespace CrossGuard {
                 }
             }
         }
+        */
 
         /**
          * Removes all twins plus from the graph.
@@ -340,6 +375,7 @@ namespace CrossGuard {
          * @param g The graph to be reduced.
          * @return The reduced graph.
          */
+        /*
         Graph reduce_twins_plus(const Graph &g) {
             AlignedVector<int> vertices(g.m_n_B);
             std::iota(vertices.begin(), vertices.end(), 0);
@@ -376,6 +412,7 @@ namespace CrossGuard {
 
             return new_g;
         }
+        */
 
         /**
          * Back propagates the solution for the twin reduction.
@@ -383,6 +420,7 @@ namespace CrossGuard {
          * @param sol The solution of the twin reduced graph.
          * @return The solution before the twin reduced graph.
          */
+        /*
         std::vector<int> back_propagate_twins_plus(const std::vector<int> &sol) {
             std::vector<int> new_sol;
 
@@ -423,6 +461,7 @@ namespace CrossGuard {
 
             return new_sol;
         }
+        */
 
         /**
          * Determines if a vector is contained in another vector.
@@ -431,9 +470,11 @@ namespace CrossGuard {
          * @param large The "larger" vector.
          * @return True if the smaller vector is contained in the larger vector, false else.
          */
+        /*
         static bool is_contained(const AlignedVector<int> &small, const AlignedVector<int> &large) {
             return std::all_of(small.begin(), small.end(), [&large](int x) { return FIND(large, x); });
         }
+        */
 
         /**
          * Determines if the excess elements in large are all smaller than the
@@ -443,11 +484,13 @@ namespace CrossGuard {
          * @param large The large vector.
          * @return True if the large vector exceeds to the left, false otherwise.
          */
+        /*
         static bool exceeds_left(const AlignedVector<int> &small, const AlignedVector<int> &large) {
             int min_small = *std::min(small.begin(), small.end());
 
             return std::all_of(large.begin(), large.end(), [&small, min_small](int x) { return (x < min_small) || (FIND(small, x)); });
         }
+        */
 
         /**
          * Determines if the excess elements in large are all greater than the
@@ -457,14 +500,14 @@ namespace CrossGuard {
          * @param large The large vector.
          * @return True if the large vector exceeds to the right, false otherwise.
          */
+        /*
         static bool exceeds_right(const AlignedVector<int> &small, const AlignedVector<int> &large) {
-            int max_small = *std::max(small.begin(), small.end());
+        int max_small = *std::max(small.begin(), small.end());
 
-            return std::all_of(large.begin(), large.end(), [&small, max_small](int x) { return (x > max_small) || (FIND(small, x)); });
+        return std::all_of(large.begin(), large.end(), [&small, max_small](int x) { return (x > max_small) || (FIND(small, x)); });
         }
-
-
-    };
+        */
+};
 
 }
 

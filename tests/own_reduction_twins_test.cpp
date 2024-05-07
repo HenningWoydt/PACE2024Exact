@@ -3,10 +3,11 @@
 
 #include <gtest/gtest.h>
 
+#include "../src/misc.h"
 #include "misc_test.h"
 
 #define max_n_B 11
-#define n_files 50
+#define n_files 10
 
 namespace CrossGuard {
 

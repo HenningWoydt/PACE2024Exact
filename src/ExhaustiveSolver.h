@@ -140,7 +140,7 @@ namespace CrossGuard {
          * @return Time in seconds.
          */
         inline double get_time() const {
-            return get_elapsed_seconds(sp, ep);
+            return get_seconds(sp, ep);
         }
 
     private:

@@ -29,7 +29,7 @@ namespace CrossGuard {
         return true;
     }
 
-    std::vector<int> read_solution(std::string &file_path, int shift) {
+    std::vector<int> read_solution(const std::string &file_path, int shift) {
         std::vector<int> vec;
 
         std::ifstream file(file_path);
@@ -48,7 +48,7 @@ namespace CrossGuard {
         return vec;
     }
 
-    void write_solution(std::vector<int> &solution, std::string &file_path) {
+    void write_solution(const std::vector<int> &solution, const std::string &file_path) {
         std::ofstream file(file_path);
 
         if (file.is_open()) {
@@ -61,8 +61,8 @@ namespace CrossGuard {
         }
     }
 
-    double get_elapsed_seconds(std::chrono::steady_clock::time_point sp,
-                               std::chrono::steady_clock::time_point ep) {
+    double get_seconds(std::chrono::steady_clock::time_point sp,
+                       std::chrono::steady_clock::time_point ep) {
         return (double) std::chrono::duration_cast<std::chrono::nanoseconds>(ep - sp).count() / 1e9;
     }
 

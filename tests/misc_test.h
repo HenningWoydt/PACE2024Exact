@@ -13,13 +13,13 @@
 
 namespace CrossGuard {
 
-    void compare_exhaustive(std::string &g_path, std::string &sol_path);
+    void compare_exhaustive(const std::string &g_path, const std::string &sol_path);
 
-    void compare_partition(std::string &g_path, std::string &sol_path, int n_partitions);
+    void compare_partition(const std::string &g_path, const std::string &sol_path, int n_partitions);
 
-    void compare_reduction_twins(std::string &g_path, std::string &sol_path, int n_reduce);
+    void compare_reduction_twins(const std::string &g_path, const std::string &sol_path, int n_reduce);
 
-    void compare(std::string &g_path, std::string &sol_path);
+    void compare(const std::string &g_path, const std::string &sol_path);
 
 }
 

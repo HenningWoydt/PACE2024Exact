@@ -138,7 +138,7 @@ namespace CrossGuard {
  * @param shift Shifts the read numbers to the left (x -= shift).
  * @return Vector containing the m_solution.
  */
-    std::vector<int> read_solution(std::string &file_path, int shift);
+    std::vector<int> read_solution(const std::string &file_path, int shift);
 
 /**
  * Write a m_solution vector to a file.
@@ -146,18 +146,52 @@ namespace CrossGuard {
  * @param solution Vector holding the m_solution.
  * @param file_path Path to the file.
  */
-    void write_solution(std::vector<int> &solution, std::string &file_path);
+    void write_solution(const std::vector<int> &solution, const std::string &file_path);
 
-/**
- * Returns the difference between two time points in seconds.
- *
- * @param sp Start time point.
- * @param ep End time point.
- * @return Difference in seconds.
- */
-    double get_elapsed_seconds(std::chrono::steady_clock::time_point sp,
-                               std::chrono::steady_clock::time_point ep);
+    /**
+     * Returns the difference between two time points in seconds.
+     *
+     * @param sp Start time point.
+     * @param ep End time point.
+     * @return Difference in seconds.
+     */
+    double get_seconds(std::chrono::steady_clock::time_point sp,
+                       std::chrono::steady_clock::time_point ep);
 
+    template<typename T>
+    bool exists(const AlignedVector<T> &vec, const T &e) {
+        for (auto &x: vec) {
+            if (x == e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    template<typename T>
+    bool equal(const AlignedVector<T> &vec1, const AlignedVector<T> &vec2) {
+        if (vec1.size() != vec2.size()) {
+            return false;
+        }
+
+        for (size_t i = 0; i < vec1.size(); ++i) {
+            if (vec1[i] != vec2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    template<typename T>
+    T min(const AlignedVector<T> &vec) {
+        T m = vec[0];
+
+        for (auto &x: vec) {
+            m = std::min(m, x);
+        }
+
+        return m;
+    }
 }
 
 #endif //PACE2024EXACT_MISC_H

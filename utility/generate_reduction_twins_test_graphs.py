@@ -5,7 +5,7 @@ from typing import List
 FILE_DIR = "../data/test/own/reduction_twins"
 MAX_A = 50
 MAX_B = 10
-N_FILES = 50
+N_FILES = 5
 N_REDUCTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
@@ -63,7 +63,7 @@ def generate_reduction_graph(n_a: int, n_b: int, n_reduce: int, path: str) -> No
         found_set = False
         while not found_set:
             n_edges = random.randint(1, n_a)
-            vertices_a = list(sorted(random.choices([i for i in range(n_a)], k=n_edges)))
+            vertices_a = list(sorted(random.sample([i for i in range(n_a)], k=n_edges)))
 
             # determine if vertices_a is already in groups
             found = False

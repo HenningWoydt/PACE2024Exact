@@ -13,6 +13,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -finline-functions -flto -fwhole-program -ftree-vectorize -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
+# set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
 
 add_executable(PACE2024Exact
@@ -28,7 +29,8 @@ add_executable(PACE2024Exact
         src/Partitioner.h
         src/TranslationTable.h
         src/Solver.h
-        src/Reducer.h)
+        src/Reducer.h
+        src/macros.h)
 
 add_executable(PACE2024Exact_test
         src/CandidateManager.h
@@ -49,7 +51,8 @@ add_executable(PACE2024Exact_test
         src/Solver.h
         src/Reducer.h
         tests/own_partition_test.cpp
-        tests/own_reduction_twins_test.cpp)
+        tests/own_reduction_twins_test.cpp
+        src/macros.h)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

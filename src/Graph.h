@@ -32,7 +32,7 @@ namespace CrossGuard {
          *
          * @param file_path Path to the file.
          */
-        explicit Graph(std::string &file_path) {
+        explicit Graph(const std::string &file_path) {
             std::ios_base::sync_with_stdio(false);
             std::ifstream file(file_path);
 
@@ -169,7 +169,7 @@ namespace CrossGuard {
          * @param permutation The m_permutation.
          * @return Number of cuts.
          */
-        inline int determine_n_cuts(std::vector<int> &permutation) {
+        inline int determine_n_cuts(const std::vector<int> &permutation) {
             int n_cuts = 0;
             for (int i = 0; i < m_n_B; ++i) {
                 for (int j = i + 1; j < m_n_B; ++j) {

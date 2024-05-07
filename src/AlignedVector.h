@@ -7,7 +7,8 @@
 namespace CrossGuard {
 
     template<typename T>
-    using AlignedVector = std::vector<T, boost::alignment::aligned_allocator<T, 64>>;
+    // using AlignedVector = std::vector<T, boost::alignment::aligned_allocator<T, 64>>;
+    using AlignedVector = std::vector<T>;
 }
 
 #endif //PACE2024EXACT_ALIGNEDVECTOR_H

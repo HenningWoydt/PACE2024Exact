@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
     // args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
-    args = {"", "../data/test/own/reduction_twins/4/9_6/2.gr", "res.txt"};
+    args = {"", "../data/test/own/reduction_twins/3/26_5/1.gr", "res.txt"};
 
     {
         std::cout << std::endl;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
         std::cout << std::endl;
         CrossGuard::Graph g(args[1]);
 
-        CrossGuard::Reducer reducer(g, true, false);
+        CrossGuard::Reducer reducer(g, true);
         CrossGuard::Graph reduced_g = reducer.reduce();
 
         std::cout << "n = " << reduced_g.m_n_B << std::endl;

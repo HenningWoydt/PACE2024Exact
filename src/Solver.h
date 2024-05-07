@@ -94,7 +94,7 @@ namespace CrossGuard {
         }
 
         double get_time() {
-            return get_elapsed_seconds(sp, ep);
+            return get_seconds(sp, ep);
         }
     };
 

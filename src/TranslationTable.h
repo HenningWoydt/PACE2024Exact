@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <map>
+#include "macros.h"
 
 namespace CrossGuard {
 
@@ -30,18 +31,26 @@ namespace CrossGuard {
         }
 
         int get_A_old(int n) const {
+            ASSERT(translation_A_new_to_old.contains(n));
+
             return translation_A_new_to_old.at(n);
         }
 
         int get_A_new(int o) const {
+            ASSERT(translation_A_old_to_new.contains(o));
+
             return translation_A_old_to_new.at(o);
         }
 
         int get_B_old(int n) const {
+            ASSERT(translation_B_new_to_old.contains(n));
+
             return translation_B_new_to_old.at(n);
         }
 
         int get_B_new(int o) const {
+            ASSERT(translation_B_old_to_new.contains(o));
+
             return translation_B_old_to_new.at(o);
         }
 
