@@ -18,41 +18,45 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
 
 add_executable(PACE2024Exact
         main.cpp
-        src/CandidateManager.h
-        src/Graph.h
-        src/CrossMatrix.h
+        src/macros.h
+        src/definitions.h
         src/misc.cpp
         src/misc.h
-        src/ExhaustiveSolver.h
-        src/Solver_BF.h
-        src/AlignedVector.h
-        src/Partitioner.h
-        src/TranslationTable.h
-        src/Solver.h
-        src/Reducer.h
-        src/macros.h)
+        src/edge.cpp
+        src/edge.h
+        src/graph.h
+        src/solver_bf.h
+        src/exhaustive_solver.h
+        src/candidate_manager.h
+        src/cross_matrix.h
+        src/partitioner.h
+        src/translation_table.h
+        src/reducer.h
+        src/solver.h)
 
 add_executable(PACE2024Exact_test
-        src/CandidateManager.h
-        src/Graph.h
-        src/CrossMatrix.h
+        src/macros.h
+        src/definitions.h
         src/misc.cpp
         src/misc.h
-        src/ExhaustiveSolver.h
-        src/Solver_BF.h
-        tests/medium_test.cpp
+        src/edge.cpp
+        src/edge.h
+        src/graph.h
+        src/solver_bf.h
+        src/exhaustive_solver.h
+        src/candidate_manager.h
+        src/cross_matrix.h
+        src/partitioner.h
+        src/translation_table.h
+        src/reducer.h
+        src/solver.h
         tests/misc_test.cpp
         tests/misc_test.h
         tests/tiny_test.cpp
         tests/own_random_test.cpp
-        src/AlignedVector.h
-        src/Partitioner.h
-        src/TranslationTable.h
-        src/Solver.h
-        src/Reducer.h
         tests/own_partition_test.cpp
         tests/own_reduction_twins_test.cpp
-        src/macros.h)
+        tests/own_all_tests.cpp)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

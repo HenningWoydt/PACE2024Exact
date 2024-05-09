@@ -29,8 +29,8 @@ namespace CrossGuard {
         return true;
     }
 
-    std::vector<int> read_solution(const std::string &file_path, int shift) {
-        std::vector<int> vec;
+    std::vector<unsigned int> read_solution(const std::string &file_path, unsigned int shift) {
+        std::vector<unsigned int> vec;
 
         std::ifstream file(file_path);
         if (file.is_open()) {
@@ -48,7 +48,7 @@ namespace CrossGuard {
         return vec;
     }
 
-    void write_solution(const std::vector<int> &solution, const std::string &file_path) {
+    void write_solution(const std::vector<unsigned int> &solution, const std::string &file_path) {
         std::ofstream file(file_path);
 
         if (file.is_open()) {
@@ -64,6 +64,18 @@ namespace CrossGuard {
     double get_seconds(std::chrono::steady_clock::time_point sp,
                        std::chrono::steady_clock::time_point ep) {
         return (double) std::chrono::duration_cast<std::chrono::nanoseconds>(ep - sp).count() / 1e9;
+    }
+
+    u64 hash(const AlignedVector<Edge> &vec) {
+        std::size_t seed = vec.size();
+        for(auto e : vec) {
+            u64 x = e.vertex;
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = (x >> 16) ^ x;
+            seed ^= x + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
     }
 
 }

@@ -10,8 +10,9 @@
 #include <unistd.h>
 #include <string>
 
-
-#include "CandidateManager.h"
+#include "definitions.h"
+#include "macros.h"
+#include "edge.h"
 
 namespace CrossGuard {
 
@@ -30,8 +31,8 @@ namespace CrossGuard {
  * @tparam T Type of the vector.
  * @param vec The vector.
  */
-    template<typename T, typename A>
-    void print(const std::vector<T, A> &vec) {
+    template<typename T>
+    void print(const std::vector<T> &vec) {
         if (vec.empty()) {
             std::cout << "[]" << std::endl;
             return;
@@ -123,9 +124,9 @@ namespace CrossGuard {
  * @return n!
  */
     template<typename T>
-    int fac(T n) {
+    T fac(T n) {
         int prod = 1;
-        for (int i = 1; i <= n; ++i) {
+        for (T i = 1; i <= n; ++i) {
             prod *= i;
         }
         return prod;
@@ -138,7 +139,7 @@ namespace CrossGuard {
  * @param shift Shifts the read numbers to the left (x -= shift).
  * @return Vector containing the m_solution.
  */
-    std::vector<int> read_solution(const std::string &file_path, int shift);
+    std::vector<unsigned int> read_solution(const std::string &file_path, unsigned int shift);
 
 /**
  * Write a m_solution vector to a file.
@@ -146,7 +147,7 @@ namespace CrossGuard {
  * @param solution Vector holding the m_solution.
  * @param file_path Path to the file.
  */
-    void write_solution(const std::vector<int> &solution, const std::string &file_path);
+    void write_solution(const std::vector<unsigned int> &solution, const std::string &file_path);
 
     /**
      * Returns the difference between two time points in seconds.
@@ -192,6 +193,31 @@ namespace CrossGuard {
 
         return m;
     }
+
+    template<typename T>
+    T max(const AlignedVector<T> &vec) {
+        T m = vec[0];
+
+        for (auto &x: vec) {
+            m = std::max(m, x);
+        }
+
+        return m;
+    }
+
+    template<typename T>
+    u64 hash(const AlignedVector<T> &vec) {
+        std::size_t seed = vec.size();
+        for(auto x : vec) {
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = (x >> 16) ^ x;
+            seed ^= x + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
+    }
+
+    u64 hash(const AlignedVector<Edge> &vec);
 }
 
 #endif //PACE2024EXACT_MISC_H

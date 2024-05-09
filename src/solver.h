@@ -1,10 +1,10 @@
 #ifndef PACE2024EXACT_SOLVER_H
 #define PACE2024EXACT_SOLVER_H
 
-#include "Graph.h"
-#include "Partitioner.h"
-#include "ExhaustiveSolver.h"
-#include "Reducer.h"
+#include "graph.h"
+#include "partitioner.h"
+#include "exhaustive_solver.h"
+#include "reducer.h"
 
 namespace CrossGuard {
 
@@ -14,7 +14,7 @@ namespace CrossGuard {
     class Solver {
     private:
         const Graph &m_graph;
-        std::vector<int> m_solution;
+        std::vector<u32> m_solution;
 
         // timings
         std::chrono::steady_clock::time_point sp;
@@ -33,34 +33,38 @@ namespace CrossGuard {
          */
         void solve() {
             sp = std::chrono::steady_clock::now();
+            ASSERT(m_graph.is_finalized);
 
             // find components of the graph
             Partitioner partitioner(m_graph);
             partitioner.find_components();
 
-            // std::cout << "n_components = " << partitioner.m_n_components << std::endl;
-
             // determine the component order
             Graph partition_g = partitioner.get_component_graph();
+            ASSERT(partition_g.is_finalized);
             ExhaustiveSolver component_solver(partition_g);
             component_solver.solve();
-            std::vector<int> component_order = component_solver.get_solution();
+            std::vector<u32> component_order = component_solver.get_solution();
 
             // solve each component
-            std::vector<std::vector<int>> solutions;
+            std::vector<std::vector<u32>> solutions;
             for (auto &g: partitioner.get_components()) {
+                ASSERT(g.is_finalized);
                 // solve sub-graph
 
-                // Reducer reducer(g);
-                // Graph reduced_g = reducer.reduce();
+                Reducer reducer(g, true);
+                Graph reduced_g = reducer.reduce();
+                ASSERT(reduced_g.is_finalized);
 
-                ExhaustiveSolver s(g);
+                ExhaustiveSolver s(reduced_g);
+                std::vector<u32> median_vector = reduced_g.get_median_solution();
+                s.set_initial_solution(median_vector);
                 s.solve();
-                std::vector<int> exhaustive_sol = s.get_solution();
+                std::vector<u32> exhaustive_sol = s.get_solution();
 
-                // std::vector<int> reduced_sol = reducer.back_propagate(exhaustive_sol);
+                std::vector<unsigned int> reduced_sol = reducer.back_propagate(exhaustive_sol);
 
-                solutions.push_back(exhaustive_sol);
+                solutions.push_back(reduced_sol);
             }
 
             m_solution = partitioner.back_propagate(solutions, component_order);
@@ -73,8 +77,8 @@ namespace CrossGuard {
          *
          * @return The solution.
          */
-        std::vector<int> get_solution() {
-            std::vector<int> sol(m_solution);
+        std::vector<unsigned int> get_solution() {
+            std::vector<u32> sol(m_solution);
             return sol;
         }
 
@@ -84,11 +88,11 @@ namespace CrossGuard {
          *
          * @return Permutation of B.
          */
-        inline std::vector<int> get_shifted_solution() const {
-            std::vector<int> v(m_solution.size());
+        inline std::vector<unsigned int> get_shifted_solution() const {
+            std::vector<u32> v(m_solution.size());
             std::copy(m_solution.begin(), m_solution.end(), v.begin());
             for (auto &x: v) {
-                x += m_graph.m_n_A + 1;
+                x += m_graph.n_A + 1;
             }
             return v;
         }

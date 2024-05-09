@@ -44,6 +44,11 @@ def start(graph: str):
 
 
 def main():
+    f = open(f'{RESULT_FILE}', 'w')
+    f.close()
+    f = open(f'{LOG_FILE}', 'w')
+    f.close()
+
     for graph in MEDIUM_TEST_GRAPHS:
         start(graph)
     for graph in GRAPHS:

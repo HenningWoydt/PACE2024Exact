@@ -4,10 +4,12 @@
 #include <numeric>
 #include <ranges>
 #include <utility>
-#include "Graph.h"
-#include "AlignedVector.h"
-#include "TranslationTable.h"
+
+#include "definitions.h"
 #include "macros.h"
+#include "misc.h"
+#include "graph.h"
+#include "translation_table.h"
 
 namespace CrossGuard {
 
@@ -27,7 +29,7 @@ namespace CrossGuard {
         const Graph m_graph;
 
         // Variables for Twins
-        AlignedVector<AlignedVector<int>> m_twins;
+        AlignedVector<AlignedVector<u32>> m_twins;
         TranslationTable m_tt_twins;
 
         // Variables for Twins+
@@ -82,8 +84,8 @@ namespace CrossGuard {
          * @param sol The solution of the reduced graph.
          * @return The solution to the original graph.
          */
-        std::vector<int> back_propagate(const std::vector<int> &sol) {
-            std::vector<int> new_sol = sol;
+        std::vector<u32> back_propagate(const std::vector<u32> &sol) {
+            std::vector<u32> new_sol = sol;
 
             /*
             if (m_twins_plus_enabled) {
@@ -106,29 +108,40 @@ namespace CrossGuard {
          * one representative.
          */
         void find_twins(const Graph &g) {
-            for (int i = 0; i < g.m_n_B; ++i) {
-                for (int j = i + 1; j < g.m_n_B; ++j) {
-                    if (equal(g.m_adj_list[i], g.m_adj_list[j]) && !g.m_adj_list[i].empty()) {
-                        // found a twin
+            ASSERT(g.is_finalized);
 
-                        // check if at least one of the twins already exists in another set
-                        bool twins_found = false;
-                        for (auto &twins: m_twins) {
-                            if (exists(twins, i) || exists(twins, j)) {
-                                // found a twin, insert the items
-                                twins.push_back(i);
-                                twins.push_back(j);
-                                twins_found = true;
-                                break;
-                            }
-                        }
+            // collect hashes with vertices
+            std::vector<std::pair<u64, u32>> hash_b(g.n_B);
+            for(u32 i = 0; i < g.n_B; ++i){
+                u32 vertex_b = i;
+                u64 hash = g.adj_hash[i];
+                hash_b[i] = {hash, vertex_b};
+            }
 
-                        if (!twins_found) {
-                            // did not find, create new twin
-                            m_twins.push_back({i, j});
-                        }
+            // sort the hashes
+            std::sort(hash_b.begin(), hash_b.end(), [](auto &left, auto &right) {
+                return left.first < right.first;
+            });
+
+            std::vector<u32> currentGroup;
+            currentGroup.push_back(hash_b[0].second);
+
+            for (size_t i = 1; i < g.n_B; ++i) {
+                if (hash_b[i].first == hash_b[i - 1].first) {
+                    // If the current element is equal to the previous one, add it to the current group
+                    currentGroup.push_back(hash_b[i].second);
+                } else {
+                    // If the current element is different, start a new group
+                    if(currentGroup.size() > 1){
+                        m_twins.push_back(currentGroup);
                     }
+                    currentGroup.clear();
+                    currentGroup.push_back(hash_b[i].second);
                 }
+            }
+            // Add the last group
+            if(currentGroup.size() > 1){
+                m_twins.push_back(currentGroup);
             }
 
             // sort and make unique
@@ -144,9 +157,9 @@ namespace CrossGuard {
             }
             ASSERT(no_duplicates(m_twins));
 
-            for(size_t i = 0; i < m_twins.size(); ++i){
-                for(size_t j = i + 1; j < m_twins.size(); ++j){
-                    for(size_t k = 0; k < m_twins[i].size(); ++k){
+            for (u32 i = 0; i < (u32) m_twins.size(); ++i) {
+                for (u32 j = i + 1; j < (u32) m_twins.size(); ++j) {
+                    for (u32 k = 0; k < (u32) m_twins[i].size(); ++k) {
                         ASSERT(!exists(m_twins[j], m_twins[i][k]));
                     }
                 }
@@ -161,24 +174,27 @@ namespace CrossGuard {
          * @return The graph free of twins.
          */
         Graph reduce_twins(const Graph &g) {
-            int n_A = g.m_n_A;
-            int n_B = g.m_n_B;
+            u32 n_A = g.n_A;
+            u32 n_B = g.n_B;
 
+            // std::cout << "Old Graph" << std::endl;
+            // g.print();
 
             // adjust the new number of vertices in B
             for (const auto &twins: m_twins) {
-                n_B = n_B - ((int) twins.size()) + 1;
+                n_B = (n_B + 1) - (u32) twins.size();
             }
 
             Graph new_g(n_A, n_B);
 
-            int new_vertex_b = 0;
-            for (int vertex_b = 0; vertex_b < g.m_n_B; ++vertex_b) {
+            u32 new_vertex_b = 0;
+            for (u32 vertex_b = 0; vertex_b < g.n_B; ++vertex_b) {
                 // process each vertex of B
 
                 // check if vertex belongs to a twin, and if it is the smallest vertex
                 bool vertex_found = false;
                 bool vertex_smallest = false;
+                u32 twins_size = 1;
                 for (auto &twins: m_twins) {
 
                     ASSERT(std::is_sorted(twins.begin(), twins.end()));
@@ -188,20 +204,25 @@ namespace CrossGuard {
                     if (exists(twins, vertex_b)) {
                         vertex_found = true;
                         vertex_smallest = (vertex_b == min(twins));
+                        twins_size = (u32) twins.size();
                     }
                 }
 
                 if ((vertex_found && vertex_smallest) || !vertex_found) {
                     // process this vertex
                     m_tt_twins.add_B(vertex_b, new_vertex_b);
+                    // std::cout << "Translation " << vertex_b << " to " << new_vertex_b << std::endl;
 
-                    for (int vertex_a: g.m_adj_list[vertex_b]) {
-                        new_g.add_edge(vertex_a, new_vertex_b);
+                    for (Edge vertex_a: g.adj_list[vertex_b]) {
+                        new_g.add_edge(vertex_a.vertex, new_vertex_b, vertex_a.weight * twins_size);
                     }
                     new_vertex_b += 1;
                 }
             }
 
+            // std::cout << "New Graph" << std::endl;
+            // new_g.print();
+            new_g.finalize();
             return new_g;
         }
 
@@ -211,11 +232,14 @@ namespace CrossGuard {
          * @param sol The solution of the twin reduced graph.
          * @return The solution before the twin reduced graph.
          */
-        std::vector<int> back_propagate_twins(const std::vector<int> &sol) {
-            std::vector<int> new_sol;
+        std::vector<u32> back_propagate_twins(const std::vector<u32> &sol) {
+            // std::cout << "New Sol" << std::endl;
+            // print(sol);
 
-            for (int vertex: sol) {
-                int old_vertex = m_tt_twins.get_B_old(vertex);
+            std::vector<u32> new_sol;
+
+            for (u32 vertex: sol) {
+                u32 old_vertex = m_tt_twins.get_B_old(vertex);
 
                 // check if vertex belongs to a twin, and if it is the smallest vertex
                 bool is_twin = false;
@@ -228,15 +252,17 @@ namespace CrossGuard {
                     if (exists(twins, old_vertex)) {
                         // insert the whole twin
                         is_twin = true;
-                        for (int twin : twins) { new_sol.push_back(twin); }
+                        for (u32 twin: twins) { new_sol.push_back(twin); }
                     }
                 }
 
-                if(!is_twin){
+                if (!is_twin) {
                     new_sol.push_back(old_vertex);
                 }
             }
 
+            // std::cout << "Old Sol" << std::endl;
+            // print(new_sol);
             return new_sol;
         }
 
@@ -507,7 +533,7 @@ namespace CrossGuard {
         return std::all_of(large.begin(), large.end(), [&small, max_small](int x) { return (x > max_small) || (FIND(small, x)); });
         }
         */
-};
+    };
 
 }
 

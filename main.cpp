@@ -1,12 +1,14 @@
 #include <iostream>
 #include <filesystem>
 
-#include "src/Graph.h"
-#include "src/Solver_BF.h"
-#include "src/ExhaustiveSolver.h"
+#include "src/definitions.h"
+#include "src/macros.h"
 #include "src/misc.h"
-#include "src/Partitioner.h"
-#include "src/Solver.h"
+#include "src/graph.h"
+#include "src/solver_bf.h"
+#include "src/exhaustive_solver.h"
+#include "src/partitioner.h"
+#include "src/solver.h"
 
 std::string convert(std::vector<int> &vec) {
     if (vec.empty()) {
@@ -23,68 +25,80 @@ std::string convert(std::vector<int> &vec) {
 int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
+    // args = {"", "../data/exact-public/5.gr", "res.txt"};
     // args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
-    args = {"", "../data/test/own/reduction_twins/3/26_5/1.gr", "res.txt"};
+    // args = {"", "../data/test/own/reduction_twins/5/48_8/4.gr", "res.txt"};
+    // args = {"", "../data/test/own/random/3_3/30.gr", "res.txt"};
+    // args = {"", "../data/test/own/partition/2/2_2/0.gr", "res.txt"};
 
     {
-        std::cout << std::endl;
+        CrossGuard::Graph g(args[1]);
+        CrossGuard::Solver s(g);
+        s.solve();
+        std::vector<unsigned int> solver_solution = s.get_solution();
+
+        std::ofstream out(args[2], std::ios_base::app);
+        //out << args[1] << ":" << s.get_time() << ":" << CrossGuard::to_string(solver_solution);
+        out << args[1] << " : " << s.get_time() << std::endl;
+        out.close();
+
+        exit(EXIT_SUCCESS);
+    }
+
+    {
+        std::cout << "--- BF ---" << std::endl;
         CrossGuard::Graph g(args[1]);
         CrossGuard::Solver_BF s(g);
         s.solve();
 
-        std::vector<int> solver_solution = s.get_solution();
-        int solver_n_cuts = g.determine_n_cuts(solver_solution);
+        std::vector<unsigned int> solver_solution = s.get_solution();
+        unsigned int solver_n_cuts = g.determine_n_cuts(solver_solution);
         CrossGuard::print(solver_solution);
         std::cout << solver_n_cuts << std::endl;
     }
 
     {
-        std::cout << std::endl;
+        std::cout << "--- Exhaustive ---" << std::endl;
         CrossGuard::Graph g(args[1]);
         CrossGuard::ExhaustiveSolver s(g);
         s.solve();
 
-        std::vector<int> solver_solution = s.get_solution();
-        int solver_n_cuts = g.determine_n_cuts(solver_solution);
+        std::vector<unsigned int> solver_solution = s.get_solution();
+        unsigned int solver_n_cuts = g.determine_n_cuts(solver_solution);
         CrossGuard::print(solver_solution);
         std::cout << solver_n_cuts << std::endl;
     }
 
     {
-        std::cout << std::endl;
+        std::cout << "--- Partition ---" << std::endl;
         CrossGuard::Graph g(args[1]);
 
-        CrossGuard::Reducer reducer(g, true);
-        CrossGuard::Graph reduced_g = reducer.reduce();
+        // g.print();
 
-        std::cout << "n = " << reduced_g.m_n_B << std::endl;
+        // find components of the graph
+        CrossGuard::Partitioner partitioner(g);
+        partitioner.find_components();
 
-        CrossGuard::ExhaustiveSolver s(reduced_g);
-        s.solve();
-        std::vector<int> exhaustive_sol = s.get_solution();
-        std::vector<int> sol = reducer.back_propagate(exhaustive_sol);
-        int n_cuts = g.determine_n_cuts(sol);
+        // determine the component order
+        CrossGuard::Graph partition_g = partitioner.get_component_graph();
+        CrossGuard::ExhaustiveSolver component_solver(partition_g);
+        component_solver.solve();
+        std::vector<unsigned int> component_order = component_solver.get_solution();
 
-        CrossGuard::print(sol);
-        std::cout << n_cuts << std::endl;
-    }
+        // solve each component
+        std::vector<std::vector<unsigned int>> solutions;
+        for (auto &sub_g: partitioner.get_components()) {
+            // solve sub-graph
+            CrossGuard::ExhaustiveSolver s(sub_g);
+            s.solve();
+            std::vector<unsigned int> temp = s.get_solution();
+            solutions.push_back(temp);
+        }
 
-    {
-        std::cout << std::endl;
-        CrossGuard::Graph g(args[1]);
-        CrossGuard::Solver s(g);
-        s.solve();
-        std::vector<int> sol = s.get_solution();
-        int solver_n_cuts = g.determine_n_cuts(sol);
+        std::vector<unsigned int> sol = partitioner.back_propagate(solutions, component_order);
+        unsigned int solver_n_cuts = g.determine_n_cuts(sol);
         CrossGuard::print(sol);
         std::cout << solver_n_cuts << std::endl;
-        double time = s.get_time();
-
-        if (!std::filesystem::exists(args[2])) {
-            std::ofstream outfile(args[2]);
-        }
-        std::ofstream outfile(args[2], std::ios_base::app);
-        outfile << args[1] << ";" << convert(sol) << ";" << solver_n_cuts << ";" << time << std::endl;
     }
 
     return 0;

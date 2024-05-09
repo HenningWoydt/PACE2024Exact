@@ -6,7 +6,7 @@ FILE_DIR = "../data/test/own/partition"
 MAX_A = 50
 MAX_B = 10
 N_PARTITIONS = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-N_FILES = 50
+N_FILES = 100
 
 
 def is_component_connected(group_a: List[int], group_b: List[int], edges: List[Tuple[int, int]]):
