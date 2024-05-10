@@ -9,18 +9,18 @@
 
 namespace CrossGuard {
 
-/**
- * One candidate.
- */
+    /**
+     * One candidate.
+     */
     struct Candidate {
         u32 c; // the element
         u32 gain; // gain in the number of cuts
-        u32 median;
+        u32 median; // median position of the element
     };
 
-/**
- * Class to manage the candidates.
- */
+    /**
+     * Class to manage the candidates.
+     */
     class CandidateManager {
     private:
         u32 m_size;
@@ -78,16 +78,6 @@ namespace CrossGuard {
          * Sorts the CandidateManager ascending.
          */
         inline void sort() {
-            /*
-            auto first = m_candidates.begin();
-            auto last = m_candidates.begin();
-            std::advance(last, m_size);
-
-            std::sort(first, last, [](const Candidate &a, const Candidate &b) {
-                return a.median < b.median;
-            });
-             */
-
             // initialize counting
             m_counting.resize(m_max_median + 1);
             std::fill(m_counting.begin(), m_counting.end(), 0);

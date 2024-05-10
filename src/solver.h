@@ -14,7 +14,7 @@ namespace CrossGuard {
     class Solver {
     private:
         const Graph &m_graph;
-        std::vector<u32> m_solution;
+        AlignedVector<u32> m_solution;
 
         // timings
         std::chrono::steady_clock::time_point sp;
@@ -44,10 +44,12 @@ namespace CrossGuard {
             ASSERT(partition_g.is_finalized);
             ExhaustiveSolver component_solver(partition_g);
             component_solver.solve();
-            std::vector<u32> component_order = component_solver.get_solution();
+            AlignedVector<u32> component_order = component_solver.get_solution();
+
+            // std::cout << "\tNumber of components: " << component_order.size() << std::endl;
 
             // solve each component
-            std::vector<std::vector<u32>> solutions;
+            AlignedVector<AlignedVector<u32>> solutions;
             for (auto &g: partitioner.get_components()) {
                 ASSERT(g.is_finalized);
                 // solve sub-graph
@@ -56,13 +58,17 @@ namespace CrossGuard {
                 Graph reduced_g = reducer.reduce();
                 ASSERT(reduced_g.is_finalized);
 
+                // std::cout << "\t\tComponent reduced from " << g.n_B << " to " << reduced_g.n_B << std::flush;
+
                 ExhaustiveSolver s(reduced_g);
-                std::vector<u32> median_vector = reduced_g.get_median_solution();
+                AlignedVector<u32> median_vector = reduced_g.get_median_solution();
                 s.set_initial_solution(median_vector);
                 s.solve();
-                std::vector<u32> exhaustive_sol = s.get_solution();
+                AlignedVector<u32> exhaustive_sol = s.get_solution();
 
-                std::vector<unsigned int> reduced_sol = reducer.back_propagate(exhaustive_sol);
+                // std::cout << " -- Component solved" << std::endl;
+
+                AlignedVector<unsigned int> reduced_sol = reducer.back_propagate(exhaustive_sol);
 
                 solutions.push_back(reduced_sol);
             }
@@ -77,8 +83,8 @@ namespace CrossGuard {
          *
          * @return The solution.
          */
-        std::vector<unsigned int> get_solution() {
-            std::vector<u32> sol(m_solution);
+        AlignedVector<unsigned int> get_solution() {
+            AlignedVector<u32> sol(m_solution);
             return sol;
         }
 
@@ -88,8 +94,8 @@ namespace CrossGuard {
          *
          * @return Permutation of B.
          */
-        inline std::vector<unsigned int> get_shifted_solution() const {
-            std::vector<u32> v(m_solution.size());
+        inline AlignedVector<unsigned int> get_shifted_solution() const {
+            AlignedVector<u32> v(m_solution.size());
             std::copy(m_solution.begin(), m_solution.end(), v.begin());
             for (auto &x: v) {
                 x += m_graph.n_A + 1;

@@ -23,11 +23,11 @@ namespace CrossGuard {
     private:
         const Graph &m_graph;
 
-        std::vector<u32> permutation; // current linear order
-        std::vector<bool> is_used; // O(1) access if a vertex is already used
+        AlignedVector<u32> permutation; // current linear order
+        AlignedVector<bool> is_used; // O(1) access if a vertex is already used
         u32 curr_size;
 
-        std::vector<u32> solution;
+        AlignedVector<u32> solution;
         u32 solution_n_cuts;
 
         // Minimum Cross Matrix
@@ -35,7 +35,7 @@ namespace CrossGuard {
 
         // debug vars
 #if BF_DEBUG
-        std::vector<std::vector<u32>> all_permutations;
+        AlignedVector<AlignedVector<u32>> all_permutations;
 #endif
 
     public:
@@ -101,8 +101,11 @@ namespace CrossGuard {
          *
          * @return Permutation of B.
          */
-        inline std::vector<unsigned int> get_solution() const {
-            std::vector<unsigned int> v(solution);
+        inline AlignedVector<unsigned int> get_solution() const {
+            AlignedVector<unsigned int> v(solution.size());
+            for(size_t i = 0; i < solution.size(); ++i){
+                v[i] = solution[i];
+            }
             return v;
         }
 
@@ -112,10 +115,10 @@ namespace CrossGuard {
          *
          * @return Permutation of B.
          */
-        inline std::vector<unsigned int> get_shifted_solution() const {
-            std::vector<unsigned int> v(solution);
-            for (auto &x: v) {
-                x += m_graph.n_A + 1;
+        inline AlignedVector<unsigned int> get_shifted_solution() const {
+            AlignedVector<unsigned int> v(solution.size());
+            for(size_t i = 0; i < solution.size(); ++i){
+                v[i] = solution[i] + m_graph.n_A + 1;
             }
             return v;
         }

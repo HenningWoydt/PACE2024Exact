@@ -9,9 +9,9 @@
 
 namespace CrossGuard {
 
-/**
- * Class to hold a Minimum-Cross-Matrix.
- */
+    /**
+     * Class to hold a Minimum-Cross-Matrix.
+     */
     class CrossMatrix {
     private:
         u32 m_n = 0;

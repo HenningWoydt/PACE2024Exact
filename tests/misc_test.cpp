@@ -3,11 +3,11 @@
 namespace CrossGuard {
 
     void compare_exhaustive(const std::string &g_path, const std::string &sol_path) {
-        std::vector<unsigned int> bf_solution;
-        std::vector<unsigned int> exhaustive_solution;
+        AlignedVector<u32> bf_solution;
+        AlignedVector<u32> exhaustive_solution;
 
-        unsigned int bf_n_cuts;
-        unsigned int exhaustive_n_cuts;
+        u32 bf_n_cuts;
+        u32 exhaustive_n_cuts;
 
         {
             Graph g(g_path);
@@ -17,7 +17,7 @@ namespace CrossGuard {
                 Solver_BF solver_bf(g);
                 solver_bf.solve();
                 bf_solution = solver_bf.get_solution();
-                std::vector<unsigned int> shifted_solution = solver_bf.get_shifted_solution();
+                AlignedVector<u32> shifted_solution = solver_bf.get_shifted_solution();
                 write_solution(shifted_solution, sol_path);
             }
             bf_n_cuts = g.determine_n_cuts(bf_solution);
@@ -34,11 +34,11 @@ namespace CrossGuard {
     }
 
     void compare_partition(const std::string &g_path, const std::string &sol_path, int n_partitions) {
-        std::vector<unsigned int> bf_solution;
-        std::vector<unsigned int> partition_solution;
+        AlignedVector<u32> bf_solution;
+        AlignedVector<u32> partition_solution;
 
-        unsigned int bf_n_cuts;
-        unsigned int partition_n_cuts;
+        u32 bf_n_cuts;
+        u32 partition_n_cuts;
 
         {
             Graph g(g_path);
@@ -48,7 +48,7 @@ namespace CrossGuard {
                 Solver_BF solver_bf(g);
                 solver_bf.solve();
                 bf_solution = solver_bf.get_solution();
-                std::vector<unsigned int> shifted_solution = solver_bf.get_shifted_solution();
+                AlignedVector<u32> shifted_solution = solver_bf.get_shifted_solution();
                 write_solution(shifted_solution, sol_path);
             }
             bf_n_cuts = g.determine_n_cuts(bf_solution);
@@ -67,15 +67,15 @@ namespace CrossGuard {
             Graph partition_g = partitioner.get_component_graph();
             ExhaustiveSolver component_solver(partition_g);
             component_solver.solve();
-            std::vector<unsigned int> component_order = component_solver.get_solution();
+            AlignedVector<u32> component_order = component_solver.get_solution();
 
             // solve each component
-            std::vector<std::vector<unsigned int>> solutions;
+            AlignedVector<AlignedVector<u32>> solutions;
             for (auto &sub_g: partitioner.get_components()) {
                 // solve sub-graph
                 ExhaustiveSolver s(sub_g);
                 s.solve();
-                std::vector<unsigned int> exhaustive_sol = s.get_solution();
+                AlignedVector<u32> exhaustive_sol = s.get_solution();
                 solutions.push_back(exhaustive_sol);
             }
             partition_solution = partitioner.back_propagate(solutions, component_order);
@@ -86,11 +86,11 @@ namespace CrossGuard {
     }
 
     void compare_reduction_twins(const std::string &g_path, const std::string &sol_path, int n_reduce) {
-        std::vector<unsigned int> bf_solution;
-        std::vector<unsigned int> reduction_solution;
+        AlignedVector<u32> bf_solution;
+        AlignedVector<u32> reduction_solution;
 
-        unsigned int bf_n_cuts;
-        unsigned int reduction_n_cuts;
+        u32 bf_n_cuts;
+        u32 reduction_n_cuts;
 
         {
             Graph g(g_path);
@@ -100,7 +100,7 @@ namespace CrossGuard {
                 Solver_BF solver_bf(g);
                 solver_bf.solve();
                 bf_solution = solver_bf.get_solution();
-                std::vector<unsigned int> shifted_solution = solver_bf.get_shifted_solution();
+                AlignedVector<u32> shifted_solution = solver_bf.get_shifted_solution();
                 write_solution(shifted_solution, sol_path);
             }
             bf_n_cuts = g.determine_n_cuts(bf_solution);
@@ -116,7 +116,7 @@ namespace CrossGuard {
 
             ExhaustiveSolver s(reduced_g);
             s.solve();
-            std::vector<unsigned int> exhaustive_sol = s.get_solution();
+            AlignedVector<u32> exhaustive_sol = s.get_solution();
 
             reduction_solution = reducer.back_propagate(exhaustive_sol);
             reduction_n_cuts = g.determine_n_cuts(reduction_solution);
@@ -126,11 +126,11 @@ namespace CrossGuard {
     }
 
     void compare_final_solver(const std::string &g_path, const std::string &sol_path) {
-        std::vector<unsigned int> bf_solution;
-        std::vector<unsigned int> solver_solution;
+        AlignedVector<u32> bf_solution;
+        AlignedVector<u32> solver_solution;
 
-        unsigned int bf_n_cuts;
-        unsigned int solver_n_cuts;
+        u32 bf_n_cuts;
+        u32 solver_n_cuts;
 
         {
             Graph g(g_path);
@@ -140,7 +140,7 @@ namespace CrossGuard {
                 Solver_BF solver_bf(g);
                 solver_bf.solve();
                 bf_solution = solver_bf.get_solution();
-                std::vector<unsigned int> shifted_solution = solver_bf.get_shifted_solution();
+                AlignedVector<u32> shifted_solution = solver_bf.get_shifted_solution();
                 write_solution(shifted_solution, sol_path);
             }
             bf_n_cuts = g.determine_n_cuts(bf_solution);
@@ -158,17 +158,17 @@ namespace CrossGuard {
     }
 
     void compare_all(const std::string &g_path, const std::string &sol_path){
-        std::vector<unsigned int> bf_solution;
-        std::vector<unsigned int> exhaustive_solution;
-        std::vector<unsigned int> partition_solution;
-        std::vector<unsigned int> reduction_solution;
-        std::vector<unsigned int> solver_solution;
+        AlignedVector<u32> bf_solution;
+        AlignedVector<u32> exhaustive_solution;
+        AlignedVector<u32> partition_solution;
+        AlignedVector<u32> reduction_solution;
+        AlignedVector<u32> solver_solution;
 
-        unsigned int bf_n_cuts;
-        unsigned int exhaustive_n_cuts;
-        unsigned int partition_n_cuts;
-        unsigned int reduction_n_cuts;
-        unsigned int solver_n_cuts;
+        u32 bf_n_cuts;
+        u32 exhaustive_n_cuts;
+        u32 partition_n_cuts;
+        u32 reduction_n_cuts;
+        u32 solver_n_cuts;
 
         {
             Graph g(g_path);
@@ -178,7 +178,7 @@ namespace CrossGuard {
                 Solver_BF solver_bf(g);
                 solver_bf.solve();
                 bf_solution = solver_bf.get_solution();
-                std::vector<unsigned int> shifted_solution = solver_bf.get_shifted_solution();
+                AlignedVector<u32> shifted_solution = solver_bf.get_shifted_solution();
                 write_solution(shifted_solution, sol_path);
             }
             bf_n_cuts = g.determine_n_cuts(bf_solution);
@@ -203,15 +203,15 @@ namespace CrossGuard {
             Graph partition_g = partitioner.get_component_graph();
             ExhaustiveSolver component_solver(partition_g);
             component_solver.solve();
-            std::vector<unsigned int> component_order = component_solver.get_solution();
+            AlignedVector<u32> component_order = component_solver.get_solution();
 
             // solve each component
-            std::vector<std::vector<unsigned int>> solutions;
+            AlignedVector<AlignedVector<u32>> solutions;
             for (auto &sub_g: partitioner.get_components()) {
                 // solve sub-graph
                 ExhaustiveSolver s(sub_g);
                 s.solve();
-                std::vector<unsigned int> temp = s.get_solution();
+                AlignedVector<u32> temp = s.get_solution();
                 solutions.push_back(temp);
             }
             partition_solution = partitioner.back_propagate(solutions, component_order);
@@ -226,7 +226,7 @@ namespace CrossGuard {
 
             ExhaustiveSolver s(reduced_g);
             s.solve();
-            std::vector<unsigned int> temp = s.get_solution();
+            AlignedVector<u32> temp = s.get_solution();
 
             reduction_solution = reducer.back_propagate(temp);
             reduction_n_cuts = g.determine_n_cuts(reduction_solution);

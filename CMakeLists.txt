@@ -26,6 +26,7 @@ add_executable(PACE2024Exact
         src/edge.h
         src/graph.h
         src/solver_bf.h
+        src/perfect_pattern.h
         src/exhaustive_solver.h
         src/candidate_manager.h
         src/cross_matrix.h
@@ -43,6 +44,7 @@ add_executable(PACE2024Exact_test
         src/edge.h
         src/graph.h
         src/solver_bf.h
+        src/perfect_pattern.h
         src/exhaustive_solver.h
         src/candidate_manager.h
         src/cross_matrix.h

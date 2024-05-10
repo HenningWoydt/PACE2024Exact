@@ -24,7 +24,7 @@ namespace CrossGuard {
  */
     bool file_exists(const std::string &file_path);
 
-/**
+    /**
  * Prints the content of a vector in a Numpy-style way. The '<<' operator must
  * be defined for T.
  *
@@ -32,7 +32,7 @@ namespace CrossGuard {
  * @param vec The vector.
  */
     template<typename T>
-    void print(const std::vector<T> &vec) {
+    void print(const AlignedVector<T> &vec) {
         if (vec.empty()) {
             std::cout << "[]" << std::endl;
             return;
@@ -53,7 +53,7 @@ namespace CrossGuard {
  * @param vec The vector.
  */
     template<typename T>
-    std::string to_string(const std::vector<T> &vec) {
+    std::string to_string(const AlignedVector<T> &vec) {
         if (vec.empty()) {
             return "[]";
         }
@@ -74,7 +74,7 @@ namespace CrossGuard {
  * @param size The size of the vector.
  */
     template<typename T>
-    void print(const std::vector<T> &vec, size_t size) {
+    void print(const AlignedVector<T> &vec, size_t size) {
         if (size == 0) {
             std::cout << "[]" << std::endl;
             return;
@@ -96,7 +96,7 @@ namespace CrossGuard {
  * @return True if no duplicates are present, false else.
  */
     template<typename T>
-    bool no_duplicates(const std::vector<T> &vec) {
+    bool no_duplicates(const AlignedVector<T> &vec) {
         for (size_t i = 0; i < vec.size(); ++i) {
             for (size_t j = i + 1; j < vec.size(); ++j) {
                 if (vec[i] == vec[j]) {
@@ -114,7 +114,7 @@ namespace CrossGuard {
  * @param vec Vector of vectors.
  * @return True if no duplicates are present, false else.
  */
-    bool no_duplicates(const std::vector<std::vector<int>> &vec);
+    bool no_duplicates(const AlignedVector<AlignedVector<int>> &vec);
 
 /**
  * Computes the factorial of a number.
@@ -139,7 +139,7 @@ namespace CrossGuard {
  * @param shift Shifts the read numbers to the left (x -= shift).
  * @return Vector containing the m_solution.
  */
-    std::vector<unsigned int> read_solution(const std::string &file_path, unsigned int shift);
+    AlignedVector<unsigned int> read_solution(const std::string &file_path, unsigned int shift);
 
 /**
  * Write a m_solution vector to a file.
@@ -147,7 +147,7 @@ namespace CrossGuard {
  * @param solution Vector holding the m_solution.
  * @param file_path Path to the file.
  */
-    void write_solution(const std::vector<unsigned int> &solution, const std::string &file_path);
+    void write_solution(const AlignedVector<unsigned int> &solution, const std::string &file_path);
 
     /**
      * Returns the difference between two time points in seconds.

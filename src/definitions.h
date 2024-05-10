@@ -5,13 +5,15 @@
 #include <cstdlib>
 #include <vector>
 
+#include <boost/align.hpp>
+
 namespace CrossGuard {
     /**
      * All data is 64 byte aligned.
      */
     template<typename T>
-        // using AlignedVector = std::vector<T, boost::alignment::aligned_allocator<T, 64>>;
-    using AlignedVector = std::vector<T>;
+    using AlignedVector = std::vector<T, boost::alignment::aligned_allocator<T, 64>>;
+    // using AlignedVector = std::vector<T>;
 
     typedef int8_t s8;
     typedef int16_t s16;

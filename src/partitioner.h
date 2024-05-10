@@ -17,14 +17,14 @@ namespace CrossGuard {
         const Graph &m_graph;
 
     public:
-        std::vector<int> m_component_id;
+        AlignedVector<int> m_component_id;
         int m_n_components;
 
-        std::vector<std::vector<u32>> m_components_A;
-        std::vector<std::vector<u32>> m_components_B;
+        AlignedVector<AlignedVector<u32>> m_components_A;
+        AlignedVector<AlignedVector<u32>> m_components_B;
 
-        std::vector<Graph> m_sub_graphs;
-        std::vector<TranslationTable> m_translation_tables;
+        AlignedVector<Graph> m_sub_graphs;
+        AlignedVector<TranslationTable> m_translation_tables;
 
         /**
          * Default constructor.
@@ -48,7 +48,7 @@ namespace CrossGuard {
          *
          * @return Vector with sub-graphs.
          */
-        std::vector<Graph> get_components() const {
+        AlignedVector<Graph> get_components() const {
             return m_sub_graphs;
         }
 
@@ -59,11 +59,11 @@ namespace CrossGuard {
          * @param order The order of the solutions.
          * @return The solution of the original graph.
          */
-        std::vector<u32> back_propagate(const std::vector<std::vector<u32>> &sols, const std::vector<u32> &order) {
-            std::vector<u32> new_sol;
+        AlignedVector<u32> back_propagate(const AlignedVector<AlignedVector<u32>> &sols, const AlignedVector<u32> &order) {
+            AlignedVector<u32> new_sol;
 
             for (u32 id: order) {
-                std::vector<u32> back_sol = back_propagate(sols[id], m_translation_tables[id]);
+                AlignedVector<u32> back_sol = back_propagate(sols[id], m_translation_tables[id]);
 
                 for (u32 x: back_sol) {
                     new_sol.push_back(x);
@@ -102,9 +102,9 @@ namespace CrossGuard {
         void identify_components() {
             m_component_id.resize(m_graph.n_B, -1);
 
-            std::vector<int> A_processed(m_graph.n_A, -1);
+            AlignedVector<int> A_processed(m_graph.n_A, -1);
 
-            std::vector<u32> queue;
+            AlignedVector<u32> queue;
             int id = 0;
 
             for (u32 i = 0; i < m_graph.n_B; ++i) {
@@ -164,7 +164,7 @@ namespace CrossGuard {
 
             // reindex the ids, because they might not be in order
             // collect ids
-            std::vector<int> ids;
+            AlignedVector<int> ids;
             for (auto &x: m_component_id) {
                 if (!exists(ids, x)) {
                     ids.push_back(x);
@@ -247,8 +247,8 @@ namespace CrossGuard {
          * @param tt The Translation Table.
          * @return The solution of the original graph.
          */
-        static std::vector<u32> back_propagate(const std::vector<u32> &sol, const TranslationTable &tt) {
-            std::vector<u32> new_sol;
+        static AlignedVector<u32> back_propagate(const AlignedVector<u32> &sol, const TranslationTable &tt) {
+            AlignedVector<u32> new_sol;
 
             // put the partial solution into the complete solution
             for (u32 j: sol) {

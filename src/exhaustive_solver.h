@@ -12,6 +12,7 @@
 #include "graph.h"
 #include "cross_matrix.h"
 #include "candidate_manager.h"
+#include "perfect_pattern.h"
 
 namespace CrossGuard {
 
@@ -34,6 +35,7 @@ namespace CrossGuard {
 
         // Minimum Cross Matrix
         CrossMatrix m_cross_matrix;
+        PerfectPattern m_perfect_pattern;
 
         // holds the best found permutation
         AlignedVector<u32> m_solution;
@@ -62,17 +64,13 @@ namespace CrossGuard {
             for (u32 i = 0; i < size; ++i) {
                 m_candidate_order.emplace_back(size - i);
             }
-            // m_candidate_order.resize(size, CandidateManager(size));
 
             m_cuts.resize(size);
             m_intra_min_cuts.resize(size);
-            // m_cut_gain.reserve(size);
-            // for(u32 i = 0; i < size; ++i){
-            //     m_cut_gain.emplace_back(size - i);
-            // }
             m_cut_gain.resize(size, AlignedVector<u32>(size));
 
             m_cross_matrix = CrossMatrix(size);
+            m_perfect_pattern = PerfectPattern(size);
 
             m_solution.resize(size); // reserve space
             m_solution_n_cuts = std::numeric_limits<u32>::max();
@@ -83,7 +81,7 @@ namespace CrossGuard {
          *
          * @param init_sol The initial solution.
          */
-        inline void set_initial_solution(std::vector<unsigned int> &init_sol) {
+        inline void set_initial_solution(AlignedVector<unsigned int> &init_sol) {
             u32 size = m_graph.n_B;
             m_init_sol.resize(size);
             std::copy(init_sol.begin(), init_sol.end(), m_init_sol.begin());
@@ -122,8 +120,8 @@ namespace CrossGuard {
          *
          * @return Permutation of B.
          */
-        inline std::vector<unsigned int> get_solution() const {
-            std::vector<unsigned int> v(m_solution.size());
+        inline AlignedVector<unsigned int> get_solution() const {
+            AlignedVector<unsigned int> v(m_solution.size());
             std::copy(m_solution.begin(), m_solution.end(), v.begin());
             return v;
         }
@@ -134,8 +132,8 @@ namespace CrossGuard {
          *
          * @return Permutation of B.
          */
-        inline std::vector<unsigned int> get_shifted_solution() const {
-            std::vector<unsigned int> v(m_solution.size());
+        inline AlignedVector<unsigned int> get_shifted_solution() const {
+            AlignedVector<unsigned int> v(m_solution.size());
             std::copy(m_solution.begin(), m_solution.end(), v.begin());
             for (auto &x: v) {
                 x += m_graph.n_A + 1;
@@ -215,6 +213,20 @@ namespace CrossGuard {
                     m_cross_matrix.set_entry(i, j, c);
                 }
             }
+
+            for (u32 i = 0; i < m_graph.n_B; ++i) {
+                for (u32 j = i + 1; j < m_graph.n_B; ++j) {
+                    u32 e1 = m_cross_matrix.get_entry(i, j);
+                    u32 e2 = m_cross_matrix.get_entry(j, i);
+                    if(e1 == 0 && e2 > 0){
+                        m_perfect_pattern.add(i, j);
+                    }
+                    if(e2 == 0 && e1 > 0){
+                        m_perfect_pattern.add(j, i);
+                    }
+                }
+            }
+            m_perfect_pattern.finalize();
         }
 
         /**
@@ -281,6 +293,25 @@ namespace CrossGuard {
                     if (m_counter[depth] == (s32) m_candidate_order[depth].get_end()) {
                         tree_movement = TREE_UP;
                         continue;
+                    }
+
+                    // check if we are violating a perfect 0/j pattern
+                    if(depth > 0) {
+                        bool violated = false;
+                        for (u32 i = (u32) m_counter[depth]; i < m_candidate_order[depth].get_end(); ++i) {
+                            u32 included_vertex = m_permutation[depth - 1];
+                            u32 not_included_vertex = m_candidate_order[depth][i].c;
+                            if (m_perfect_pattern.matches(not_included_vertex, included_vertex)) {
+                                violated = true;
+                                break;
+                            }
+                        }
+                        if (violated) {
+                            // std::cout << "Found Violation" << std::endl;
+                            m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
+                            tree_movement = TREE_UP;
+                            continue;
+                        }
                     }
 
                     // check if we can abort early
@@ -352,7 +383,7 @@ namespace CrossGuard {
                 }
             }
 
-            m_candidate_order[depth].sort();
+            // m_candidate_order[depth].sort();
         }
 
         /**

@@ -177,7 +177,7 @@ namespace CrossGuard {
          * @param permutation The m_permutation.
          * @return Number of cuts.
          */
-        inline u32 determine_n_cuts(const std::vector<u32> &permutation) {
+        inline u32 determine_n_cuts(const AlignedVector<u32> &permutation) {
             ASSERT((u32) permutation.size() == n_B);
             ASSERT(no_duplicates(permutation));
 
@@ -218,10 +218,10 @@ namespace CrossGuard {
          *
          * @return The median solution.
          */
-        inline std::vector<unsigned int> get_median_solution(){
+        inline AlignedVector<unsigned int> get_median_solution(){
             ASSERT(is_finalized);
 
-            std::vector<std::pair<u32, u32>> temp(n_B);
+            AlignedVector<std::pair<u32, u32>> temp(n_B);
             for(u32 i = 0; i < n_B; ++i){
                 u32 vertex_b = i;
                 u32 median = medians[i];
@@ -232,7 +232,7 @@ namespace CrossGuard {
                 return left.second < right.second;
             });
 
-            std::vector<u32> res(n_B);
+            AlignedVector<u32> res(n_B);
             for(u32 i = 0; i < n_B; ++i){
                 res[i] = temp[i].first;
             }

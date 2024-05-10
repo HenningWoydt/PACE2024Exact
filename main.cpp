@@ -10,7 +10,9 @@
 #include "src/partitioner.h"
 #include "src/solver.h"
 
-std::string convert(std::vector<int> &vec) {
+using namespace CrossGuard;
+
+std::string convert(AlignedVector<int> &vec) {
     if (vec.empty()) {
         return "[]";
     }
@@ -23,81 +25,79 @@ std::string convert(std::vector<int> &vec) {
 }
 
 int main(int argc, char *argv[]) {
-    std::vector<std::string> args(argv, argv + argc);
+    AlignedVector<std::string> args(argv, argv + argc);
 
-    args = {"", "../data/exact-public/87.gr", "res.txt"};
-    // args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
+    // args = {"", "../data/exact-public/87.gr", "res.txt"};
+    args = {"", "../data/test/medium_test_set/22.gr", "res.txt"};
     // args = {"", "../data/test/own/reduction_twins/5/48_8/4.gr", "res.txt"};
     // args = {"", "../data/test/own/random/3_3/30.gr", "res.txt"};
     // args = {"", "../data/test/own/partition/2/2_2/0.gr", "res.txt"};
 
     {
-        CrossGuard::Graph g(args[1]);
-        CrossGuard::Solver s(g);
+        Graph g(args[1]);
+        Solver s(g);
         s.solve();
-        std::vector<unsigned int> solver_solution = s.get_solution();
+        AlignedVector<u32> solver_solution = s.get_solution();
 
         std::ofstream out(args[2], std::ios_base::app);
         out << args[1] << " : " << s.get_time() << std::endl;
         out.close();
-        // std::cout << s.get_time() << std::endl;
+        std::cout << s.get_time() << std::endl;
 
         exit(EXIT_SUCCESS);
     }
 
     {
         std::cout << "--- BF ---" << std::endl;
-        CrossGuard::Graph g(args[1]);
-        CrossGuard::Solver_BF s(g);
+        Graph g(args[1]);
+        Solver_BF s(g);
         s.solve();
 
-        std::vector<unsigned int> solver_solution = s.get_solution();
-        unsigned int solver_n_cuts = g.determine_n_cuts(solver_solution);
-        CrossGuard::print(solver_solution);
+        AlignedVector<u32> solver_solution = s.get_solution();
+        u32 solver_n_cuts = g.determine_n_cuts(solver_solution);
+        print(solver_solution);
         std::cout << solver_n_cuts << std::endl;
     }
 
     {
         std::cout << "--- Exhaustive ---" << std::endl;
-        CrossGuard::Graph g(args[1]);
-        CrossGuard::ExhaustiveSolver s(g);
+        Graph g(args[1]);
+        ExhaustiveSolver s(g);
         s.solve();
 
-        std::vector<unsigned int> solver_solution = s.get_solution();
-        unsigned int solver_n_cuts = g.determine_n_cuts(solver_solution);
-        CrossGuard::print(solver_solution);
+        AlignedVector<u32> solver_solution = s.get_solution();
+        u32 solver_n_cuts = g.determine_n_cuts(solver_solution);
+        print(solver_solution);
         std::cout << solver_n_cuts << std::endl;
     }
 
     {
         std::cout << "--- Partition ---" << std::endl;
-        CrossGuard::Graph g(args[1]);
-
-        // g.print();
+        Graph g(args[1]);
 
         // find components of the graph
-        CrossGuard::Partitioner partitioner(g);
+        Partitioner partitioner(g);
         partitioner.find_components();
 
         // determine the component order
-        CrossGuard::Graph partition_g = partitioner.get_component_graph();
-        CrossGuard::ExhaustiveSolver component_solver(partition_g);
+        Graph partition_g = partitioner.get_component_graph();
+        ExhaustiveSolver component_solver(partition_g);
         component_solver.solve();
-        std::vector<unsigned int> component_order = component_solver.get_solution();
+        AlignedVector<u32> component_order = component_solver.get_solution();
 
         // solve each component
-        std::vector<std::vector<unsigned int>> solutions;
+        AlignedVector<AlignedVector<u32>> solutions;
         for (auto &sub_g: partitioner.get_components()) {
             // solve sub-graph
-            CrossGuard::ExhaustiveSolver s(sub_g);
+            ExhaustiveSolver s(sub_g);
             s.solve();
-            std::vector<unsigned int> temp = s.get_solution();
+            AlignedVector<u32> temp = s.get_solution();
             solutions.push_back(temp);
         }
 
-        std::vector<unsigned int> sol = partitioner.back_propagate(solutions, component_order);
-        unsigned int solver_n_cuts = g.determine_n_cuts(sol);
-        CrossGuard::print(sol);
+        AlignedVector<u32> sol = partitioner.back_propagate(solutions, component_order);
+        u32 solver_n_cuts = g.determine_n_cuts(sol);
+        print(sol);
         std::cout << solver_n_cuts << std::endl;
     }
 

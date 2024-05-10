@@ -7,11 +7,11 @@ namespace CrossGuard {
         return (stat(file_path.c_str(), &buffer) == 0);
     }
 
-    bool no_duplicates(const std::vector<std::vector<int>> &vec) {
+    bool no_duplicates(const AlignedVector<AlignedVector<int>> &vec) {
         for (size_t i = 0; i < vec.size(); ++i) {
             for (size_t j = i + 1; j < vec.size(); ++j) {
-                std::vector<int> vec1 = vec[i];
-                std::vector<int> vec2 = vec[j];
+                AlignedVector<int> vec1 = vec[i];
+                AlignedVector<int> vec2 = vec[j];
 
                 bool is_same = true;
                 for (size_t k = 0; k < vec1.size(); ++k) {
@@ -29,8 +29,8 @@ namespace CrossGuard {
         return true;
     }
 
-    std::vector<unsigned int> read_solution(const std::string &file_path, unsigned int shift) {
-        std::vector<unsigned int> vec;
+    AlignedVector<unsigned int> read_solution(const std::string &file_path, unsigned int shift) {
+        AlignedVector<unsigned int> vec;
 
         std::ifstream file(file_path);
         if (file.is_open()) {
@@ -48,7 +48,7 @@ namespace CrossGuard {
         return vec;
     }
 
-    void write_solution(const std::vector<unsigned int> &solution, const std::string &file_path) {
+    void write_solution(const AlignedVector<unsigned int> &solution, const std::string &file_path) {
         std::ofstream file(file_path);
 
         if (file.is_open()) {

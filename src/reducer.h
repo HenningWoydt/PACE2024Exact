@@ -84,8 +84,8 @@ namespace CrossGuard {
          * @param sol The solution of the reduced graph.
          * @return The solution to the original graph.
          */
-        std::vector<u32> back_propagate(const std::vector<u32> &sol) {
-            std::vector<u32> new_sol = sol;
+        AlignedVector<u32> back_propagate(const AlignedVector<u32> &sol) {
+            AlignedVector<u32> new_sol = sol;
 
             /*
             if (m_twins_plus_enabled) {
@@ -111,7 +111,7 @@ namespace CrossGuard {
             ASSERT(g.is_finalized);
 
             // collect hashes with vertices
-            std::vector<std::pair<u64, u32>> hash_b(g.n_B);
+            AlignedVector<std::pair<u64, u32>> hash_b(g.n_B);
             for(u32 i = 0; i < g.n_B; ++i){
                 u32 vertex_b = i;
                 u64 hash = g.adj_hash[i];
@@ -123,7 +123,7 @@ namespace CrossGuard {
                 return left.first < right.first;
             });
 
-            std::vector<u32> currentGroup;
+            AlignedVector<u32> currentGroup;
             currentGroup.push_back(hash_b[0].second);
 
             for (size_t i = 1; i < g.n_B; ++i) {
@@ -177,9 +177,6 @@ namespace CrossGuard {
             u32 n_A = g.n_A;
             u32 n_B = g.n_B;
 
-            // std::cout << "Old Graph" << std::endl;
-            // g.print();
-
             // adjust the new number of vertices in B
             for (const auto &twins: m_twins) {
                 n_B = (n_B + 1) - (u32) twins.size();
@@ -211,7 +208,6 @@ namespace CrossGuard {
                 if ((vertex_found && vertex_smallest) || !vertex_found) {
                     // process this vertex
                     m_tt_twins.add_B(vertex_b, new_vertex_b);
-                    // std::cout << "Translation " << vertex_b << " to " << new_vertex_b << std::endl;
 
                     for (Edge vertex_a: g.adj_list[vertex_b]) {
                         new_g.add_edge(vertex_a.vertex, new_vertex_b, vertex_a.weight * twins_size);
@@ -220,8 +216,6 @@ namespace CrossGuard {
                 }
             }
 
-            // std::cout << "New Graph" << std::endl;
-            // new_g.print();
             new_g.finalize();
             return new_g;
         }
@@ -232,11 +226,8 @@ namespace CrossGuard {
          * @param sol The solution of the twin reduced graph.
          * @return The solution before the twin reduced graph.
          */
-        std::vector<u32> back_propagate_twins(const std::vector<u32> &sol) {
-            // std::cout << "New Sol" << std::endl;
-            // print(sol);
-
-            std::vector<u32> new_sol;
+        AlignedVector<u32> back_propagate_twins(const AlignedVector<u32> &sol) {
+            AlignedVector<u32> new_sol;
 
             for (u32 vertex: sol) {
                 u32 old_vertex = m_tt_twins.get_B_old(vertex);
@@ -261,8 +252,6 @@ namespace CrossGuard {
                 }
             }
 
-            // std::cout << "Old Sol" << std::endl;
-            // print(new_sol);
             return new_sol;
         }
 
@@ -447,8 +436,8 @@ namespace CrossGuard {
          * @return The solution before the twin reduced graph.
          */
         /*
-        std::vector<int> back_propagate_twins_plus(const std::vector<int> &sol) {
-            std::vector<int> new_sol;
+        AlignedVector<int> back_propagate_twins_plus(const AlignedVector<int> &sol) {
+            AlignedVector<int> new_sol;
 
             // translate
             for (int vertex: sol) {
