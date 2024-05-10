@@ -102,11 +102,13 @@ namespace CrossGuard {
         void identify_components() {
             m_component_id.resize(m_graph.n_B, -1);
 
+            std::vector<int> A_processed(m_graph.n_A, -1);
+
             std::vector<u32> queue;
             int id = 0;
 
-            for(u32 i = 0; i < m_graph.n_B; ++i){
-                if(m_component_id[i] == -1){
+            for (u32 i = 0; i < m_graph.n_B; ++i) {
+                if (m_component_id[i] == -1) {
                     queue.push_back(i);
 
                     // store the min and max of this partition
@@ -114,27 +116,37 @@ namespace CrossGuard {
                     u32 vertex_a_max = 0;
 
                     // process all elements in the queue
-                    while(!queue.empty()){
+                    while (!queue.empty()) {
                         u32 vertex_b = queue.back();
                         queue.pop_back();
 
-                        if (m_component_id[vertex_b] != id){
+                        if (m_component_id[vertex_b] != id) {
                             // we have to process vertex_b
 
                             // look for all other B vertices that are connected via A
-                            for(Edge a : m_graph.adj_list[vertex_b]){
-                                vertex_a_min = std::min(vertex_a_min, a.vertex);
-                                vertex_a_max = std::max(vertex_a_max, a.vertex);
+                            for (Edge a: m_graph.adj_list[vertex_b]) {
+                                if (A_processed[a.vertex] != id) {
+                                    vertex_a_min = std::min(vertex_a_min, a.vertex);
+                                    vertex_a_max = std::max(vertex_a_max, a.vertex);
 
-                                for(Edge b : m_graph.adj_list_from_A[a.vertex]){
-                                    queue.push_back(b.vertex);
+                                    for (Edge b: m_graph.adj_list_from_A[a.vertex]) {
+                                        if (m_component_id[b.vertex] != id) {
+                                            queue.push_back(b.vertex);
+                                        }
+                                    }
+                                    A_processed[a.vertex] = id;
                                 }
                             }
 
                             // look for all other B that are connected to a vertex in A of [vertex_a_min, vertex_a_max]
-                            for(u32 idx = vertex_a_min; idx <= vertex_a_max; ++idx){
-                                for(Edge b : m_graph.adj_list_from_A[idx]){
-                                    queue.push_back(b.vertex);
+                            for (u32 idx = vertex_a_min; idx <= vertex_a_max; ++idx) {
+                                if (A_processed[idx] != id) {
+                                    for (Edge b: m_graph.adj_list_from_A[idx]) {
+                                        if (m_component_id[b.vertex] != id) {
+                                            queue.push_back(b.vertex);
+                                        }
+                                    }
+                                    A_processed[idx] = id;
                                 }
                             }
 
@@ -148,73 +160,27 @@ namespace CrossGuard {
                 }
             }
 
-            /*
-            for (u32 i = 0; i < m_graph.n_B; ++i) {
-                if (m_component_id[i] == -1) {
-                    queue.push_back(i);
-
-                    u32 vertex_a_min = m_graph.n_A;
-                    u32 vertex_a_max = 0;
-
-                    while (!queue.empty()) {
-                        u32 vertex_b = queue.back();
-                        queue.pop_back();
-
-                        if (m_component_id[vertex_b] == -1) {
-                            for (u32 j = 0; j < (u32) m_graph.adj_list[vertex_b].size(); ++j) {
-                                Edge vertex_a = m_graph.adj_list[vertex_b][j];
-                                vertex_a_max = std::max(vertex_a_max, vertex_a.vertex);
-                                vertex_a_min = std::min(vertex_a_min, vertex_a.vertex);
-
-                                // insert all B vertices that are connected via vertex A
-                                for (u32 k = 0; k < (u32) m_graph.adj_list_from_A[vertex_a.vertex].size(); ++k) {
-                                    Edge next_vertex_b = m_graph.adj_list_from_A[vertex_a.vertex][k];
-                                    if (m_component_id[next_vertex_b.vertex] == -1) {
-                                        queue.push_back(next_vertex_b.vertex);
-                                    }
-                                }
-                            }
-                            for (u32 vertex_a = vertex_a_min; vertex_a <= vertex_a_max; ++vertex_a) {
-                                for (u32 k = 0; k < (u32) m_graph.adj_list_from_A[vertex_a].size(); ++k) {
-                                    Edge next_vertex_b = m_graph.adj_list_from_A[vertex_a][k];
-                                    if (m_component_id[next_vertex_b.vertex] == -1) {
-                                        queue.push_back(next_vertex_b.vertex);
-                                    }
-                                }
-                            }
-
-                            m_component_id[vertex_b] = id;
-                        }
-                    }
-                    id += 1;
-                }
-            }
-            m_n_components = id;
-             */
-
             ASSERT(!exists(m_component_id, -1));
 
             // reindex the ids, because they might not be in order
             // collect ids
             std::vector<int> ids;
-            for(auto &x : m_component_id){
-                if(!exists(ids, x)){
+            for (auto &x: m_component_id) {
+                if (!exists(ids, x)) {
                     ids.push_back(x);
                 }
             }
 
             // reindex
-            for(int i = 0; i < (int) ids.size(); ++i){
-                for(size_t j = 0; j < m_component_id.size(); ++j){
-                    if(m_component_id[j] == ids[i]){
+            for (int i = 0; i < (int) ids.size(); ++i) {
+                for (size_t j = 0; j < m_component_id.size(); ++j) {
+                    if (m_component_id[j] == ids[i]) {
                         m_component_id[j] = i;
                     }
                 }
             }
             m_n_components = max(m_component_id) + 1;
 
-            // print(m_component_id);
-            // std::cout << m_n_components << std::endl;
 
             // collect all components
             m_components_A.resize(m_n_components);

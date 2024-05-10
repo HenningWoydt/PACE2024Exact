@@ -25,7 +25,7 @@ std::string convert(std::vector<int> &vec) {
 int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
-    // args = {"", "../data/exact-public/5.gr", "res.txt"};
+    // args = {"", "../data/exact-public/17.gr", "res.txt"};
     // args = {"", "../data/test/medium_test_set/32.gr", "res.txt"};
     // args = {"", "../data/test/own/reduction_twins/5/48_8/4.gr", "res.txt"};
     // args = {"", "../data/test/own/random/3_3/30.gr", "res.txt"};
@@ -38,9 +38,9 @@ int main(int argc, char *argv[]) {
         std::vector<unsigned int> solver_solution = s.get_solution();
 
         std::ofstream out(args[2], std::ios_base::app);
-        //out << args[1] << ":" << s.get_time() << ":" << CrossGuard::to_string(solver_solution);
         out << args[1] << " : " << s.get_time() << std::endl;
         out.close();
+        // std::cout << s.get_time() << std::endl;
 
         exit(EXIT_SUCCESS);
     }
