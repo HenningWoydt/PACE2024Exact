@@ -59,7 +59,7 @@ namespace CrossGuard {
          *
          * @return The newly reduced graph.
          */
-        Graph reduce() {
+        inline Graph reduce() {
             Graph g = m_graph;
 
             if (m_twins_enabled) {
@@ -84,7 +84,7 @@ namespace CrossGuard {
          * @param sol The solution of the reduced graph.
          * @return The solution to the original graph.
          */
-        AlignedVector<u32> back_propagate(const AlignedVector<u32> &sol) {
+        inline AlignedVector<u32> back_propagate(const AlignedVector<u32> &sol) {
             AlignedVector<u32> new_sol = sol;
 
             /*
@@ -107,7 +107,7 @@ namespace CrossGuard {
          * These twins can be placed one after the other and we only need to hold
          * one representative.
          */
-        void find_twins(const Graph &g) {
+        inline void find_twins(const Graph &g) {
             ASSERT(g.is_finalized);
 
             // collect hashes with vertices
@@ -173,7 +173,7 @@ namespace CrossGuard {
          * @param g The graph to be freed.
          * @return The graph free of twins.
          */
-        Graph reduce_twins(const Graph &g) {
+        inline Graph reduce_twins(const Graph &g) {
             u32 n_A = g.n_A;
             u32 n_B = g.n_B;
 
@@ -226,7 +226,7 @@ namespace CrossGuard {
          * @param sol The solution of the twin reduced graph.
          * @return The solution before the twin reduced graph.
          */
-        AlignedVector<u32> back_propagate_twins(const AlignedVector<u32> &sol) {
+        inline AlignedVector<u32> back_propagate_twins(const AlignedVector<u32> &sol) {
             AlignedVector<u32> new_sol;
 
             for (u32 vertex: sol) {

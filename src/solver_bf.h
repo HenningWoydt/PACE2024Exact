@@ -45,12 +45,10 @@ namespace CrossGuard {
          *
          * @param g The m_graph to optimize.
          */
-        explicit Solver_BF(Graph &g) : m_graph(g) {
+        explicit Solver_BF(Graph &g) : m_graph(g), m_cross_matrix(m_graph.n_B) {
             permutation.resize(m_graph.n_B);
             is_used.resize(m_graph.n_B, false);
             curr_size = 0;
-
-            m_cross_matrix = CrossMatrix(m_graph.n_B);
 
             solution.resize(m_graph.n_B);
             solution_n_cuts = std::numeric_limits<u32>::max();
@@ -134,7 +132,7 @@ namespace CrossGuard {
             u32 n_cuts = 0;
             for (u32 i = 0; i < curr_size; ++i) {
                 for (u32 j = i + 1; j < curr_size; ++j) {
-                    n_cuts += m_cross_matrix.get_entry(permutation[i], permutation[j]);
+                    n_cuts += m_cross_matrix.matrix[permutation[i] * m_graph.n_B + permutation[j]];
                 }
             }
             return n_cuts;
@@ -144,19 +142,26 @@ namespace CrossGuard {
          * Initialize the Cross-Matrix.
          */
         inline void initialize_CrossMatrix() {
+            ASSERT(m_graph.is_finalized);
+
             for (u32 i = 0; i < m_graph.n_B; ++i) {
-                for (u32 j = 0; j < m_graph.n_B; ++j) {
-                    u32 c = 0;
+                for (u32 j = i+1; j < m_graph.n_B; ++j) {
+                    u32 c1 = 0;
+                    u32 c2 = 0;
                     // loop through the edges
                     for (size_t k = 0; k < m_graph.adj_list[i].size(); ++k) {
                         for (size_t l = 0; l < m_graph.adj_list[j].size(); ++l) {
                             Edge a1 = m_graph.adj_list[i][k];
                             Edge a2 = m_graph.adj_list[j][l];
 
-                            c += (a2.vertex < a1.vertex) * (a1.weight * a2.weight);
+                            u32 cuts = a1.weight * a2.weight;
+
+                            c1 += (a2.vertex < a1.vertex) * cuts;
+                            c2 += (a1.vertex < a2.vertex) * cuts;
                         }
                     }
-                    m_cross_matrix.set_entry(i, j, c);
+                    m_cross_matrix.matrix[i * m_graph.n_B + j] = c1;
+                    m_cross_matrix.matrix[j * m_graph.n_B + i] = c2;
                 }
             }
         }

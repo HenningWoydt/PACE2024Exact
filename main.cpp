@@ -28,9 +28,9 @@ int main(int argc, char *argv[]) {
     AlignedVector<std::string> args(argv, argv + argc);
 
     // args = {"", "../data/exact-public/87.gr", "res.txt"};
-    args = {"", "../data/test/medium_test_set/22.gr", "res.txt"};
+    // args = {"", "../data/test/medium_test_set/22.gr", "res.txt"};
     // args = {"", "../data/test/own/reduction_twins/5/48_8/4.gr", "res.txt"};
-    // args = {"", "../data/test/own/random/3_3/30.gr", "res.txt"};
+    // args = {"", "../data/test/own/random/2_3/26.gr", "res.txt"};
     // args = {"", "../data/test/own/partition/2/2_2/0.gr", "res.txt"};
 
     {
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         std::ofstream out(args[2], std::ios_base::app);
         out << args[1] << " : " << s.get_time() << std::endl;
         out.close();
-        std::cout << s.get_time() << std::endl;
+        // std::cout << s.get_time() << std::endl;
 
         exit(EXIT_SUCCESS);
     }

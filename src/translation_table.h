@@ -23,35 +23,35 @@ namespace CrossGuard {
     public:
         explicit TranslationTable() = default;
 
-        void add_A(u32 o, u32 n) {
+        inline void add_A(u32 o, u32 n) {
             translation_A_new_to_old[n] = o;
             translation_A_old_to_new[o] = n;
         }
 
-        void add_B(u32 o, u32 n) {
+        inline void add_B(u32 o, u32 n) {
             translation_B_new_to_old[n] = o;
             translation_B_old_to_new[o] = n;
         }
 
-        u32 get_A_old(u32 n) const {
+        inline u32 get_A_old(u32 n) const {
             ASSERT(translation_A_new_to_old.contains(n));
 
             return translation_A_new_to_old.at(n);
         }
 
-        u32 get_A_new(u32 o) const {
+        inline u32 get_A_new(u32 o) const {
             ASSERT(translation_A_old_to_new.contains(o));
 
             return translation_A_old_to_new.at(o);
         }
 
-        u32 get_B_old(u32 n) const {
+        inline u32 get_B_old(u32 n) const {
             ASSERT(translation_B_new_to_old.contains(n));
 
             return translation_B_new_to_old.at(n);
         }
 
-        u32 get_B_new(u32 o) const {
+        inline u32 get_B_new(u32 o) const {
             ASSERT(translation_B_old_to_new.contains(o));
 
             return translation_B_old_to_new.at(o);

@@ -31,7 +31,7 @@ namespace CrossGuard {
         /**
          * Solves the problem.
          */
-        void solve() {
+        inline void solve() {
             sp = std::chrono::steady_clock::now();
             ASSERT(m_graph.is_finalized);
 
@@ -51,8 +51,8 @@ namespace CrossGuard {
             // solve each component
             AlignedVector<AlignedVector<u32>> solutions;
             for (auto &g: partitioner.get_components()) {
-                ASSERT(g.is_finalized);
                 // solve sub-graph
+                ASSERT(g.is_finalized);
 
                 Reducer reducer(g, true);
                 Graph reduced_g = reducer.reduce();
@@ -83,7 +83,7 @@ namespace CrossGuard {
          *
          * @return The solution.
          */
-        AlignedVector<unsigned int> get_solution() {
+        inline AlignedVector<unsigned int> get_solution() {
             AlignedVector<u32> sol(m_solution);
             return sol;
         }
@@ -103,7 +103,7 @@ namespace CrossGuard {
             return v;
         }
 
-        double get_time() {
+        inline double get_time() {
             return get_seconds(sp, ep);
         }
     };

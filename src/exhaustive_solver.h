@@ -22,16 +22,17 @@ namespace CrossGuard {
     class ExhaustiveSolver {
     private:
         const Graph &m_graph;
+        const u32 n;
 
         AlignedVector<u32> m_permutation; // current linear order
-        AlignedVector<u32> m_is_used; // O(1) access to check if a vertex is used
+        AlignedVector<u8> m_is_used; // O(1) access to check if a vertex is used
 
         AlignedVector<s32> m_counter; // used in iterative search
         AlignedVector<CandidateManager> m_candidate_order;
 
         AlignedVector<u32> m_cuts; // number of cuts at each depth
         AlignedVector<u32> m_intra_min_cuts; // number of intra min cuts per depth
-        AlignedVector<AlignedVector<u32>> m_cut_gain; // cut gain per depth per element
+        AlignedVector<u32> m_inter_min_cuts; // number of inter min cuts per depth
 
         // Minimum Cross Matrix
         CrossMatrix m_cross_matrix;
@@ -44,35 +45,30 @@ namespace CrossGuard {
         // holds the (optional) initial solution
         AlignedVector<u32> m_init_sol;
 
-        // timings
-        std::chrono::steady_clock::time_point sp;
-        std::chrono::steady_clock::time_point ep;
-
     public:
         /**
          * Default constructor.
          *
          * @param g The graph to optimize.
          */
-        explicit ExhaustiveSolver(Graph &g) : m_graph(g) {
-            u32 size = m_graph.n_B;
-            m_permutation.resize(size); // reserve space
-            m_is_used.resize(size, false); // no vertex is used
+        explicit ExhaustiveSolver(Graph &g) : m_graph(g),
+                                              n(g.n_B),
+                                              m_cross_matrix(g.n_B),
+                                              m_perfect_pattern(g.n_B) {
+            m_permutation.resize(n); // reserve space
+            m_is_used.resize(n, false); // no vertex is used
 
-            m_counter.resize(size, -1); // all m_counter are -1
-            m_candidate_order.reserve(size);
-            for (u32 i = 0; i < size; ++i) {
-                m_candidate_order.emplace_back(size - i);
+            m_counter.resize(n, -1); // all m_counter are -1
+            m_candidate_order.reserve(n);
+            for (u32 i = 0; i < n; ++i) {
+                m_candidate_order.emplace_back(1 + n - i);
             }
 
-            m_cuts.resize(size);
-            m_intra_min_cuts.resize(size);
-            m_cut_gain.resize(size, AlignedVector<u32>(size));
+            m_cuts.resize(n);
+            m_intra_min_cuts.resize(n);
+            m_inter_min_cuts.resize(n);
 
-            m_cross_matrix = CrossMatrix(size);
-            m_perfect_pattern = PerfectPattern(size);
-
-            m_solution.resize(size); // reserve space
+            m_solution.resize(n); // reserve space
             m_solution_n_cuts = std::numeric_limits<u32>::max();
         }
 
@@ -82,8 +78,7 @@ namespace CrossGuard {
          * @param init_sol The initial solution.
          */
         inline void set_initial_solution(AlignedVector<unsigned int> &init_sol) {
-            u32 size = m_graph.n_B;
-            m_init_sol.resize(size);
+            m_init_sol.resize(n);
             std::copy(init_sol.begin(), init_sol.end(), m_init_sol.begin());
         }
 
@@ -91,8 +86,6 @@ namespace CrossGuard {
          * Determines the m_permutation, with the least number of cuts.
          */
         inline void solve() {
-            sp = std::chrono::steady_clock::now();
-
             // initialize the Crossing Matrix
             initialize_CrossMatrix();
 
@@ -101,22 +94,17 @@ namespace CrossGuard {
             check_new_solution(m_permutation);
 
             // initial solution, if provided
-            if (m_init_sol.size() > (size_t) 0) {
+            if (!m_init_sol.empty()) {
                 check_new_solution(m_init_sol);
             }
 
-            // check for a fast greedy solution
-            initial_greedy();
-
             // exhaustive search
             iterative_search();
-
-            ep = std::chrono::steady_clock::now();
         }
 
         /**
          * Returns the permutation vector. All entries are in the range
-         * [0, ..., n_B - 1].
+         * [0, ..., n - 1].
          *
          * @return Permutation of B.
          */
@@ -126,30 +114,6 @@ namespace CrossGuard {
             return v;
         }
 
-        /**
-         * Returns the permutation vector. All entries are in the range
-         * [n_A + 1, ..., n_A + n_B].
-         *
-         * @return Permutation of B.
-         */
-        inline AlignedVector<unsigned int> get_shifted_solution() const {
-            AlignedVector<unsigned int> v(m_solution.size());
-            std::copy(m_solution.begin(), m_solution.end(), v.begin());
-            for (auto &x: v) {
-                x += m_graph.n_A + 1;
-            }
-            return v;
-        }
-
-        /**
-         * Return the elapsed time in seconds.
-         *
-         * @return Time in seconds.
-         */
-        inline double get_time() const {
-            return get_seconds(sp, ep);
-        }
-
     private:
         /**
          * Determines is a new solution has been found.
@@ -157,8 +121,7 @@ namespace CrossGuard {
          * @param sol The possible solution.
          */
         inline bool check_new_solution(AlignedVector<u32> &sol) {
-            u32 size = m_graph.n_B;
-            u32 n_cuts = count_cuts(sol, size);
+            u32 n_cuts = count_cuts(sol, n);
             if (n_cuts < m_solution_n_cuts) {
                 std::copy(sol.begin(), sol.end(), m_solution.begin());
                 m_solution_n_cuts = n_cuts;
@@ -176,93 +139,42 @@ namespace CrossGuard {
             u32 n_cuts = 0;
             for (u32 i = 0; i < size; ++i) {
                 for (u32 j = i + 1; j < size; ++j) {
-                    n_cuts += m_cross_matrix.get_entry(perm[i], perm[j]);
+                    n_cuts += m_cross_matrix.matrix[perm[i] * n + perm[j]];
                 }
             }
             return n_cuts;
         }
 
         /**
-         * Count the number of cuts, that are added by adding c to the permutation.
-         *
-         * @param perm The current permutation.
-         * @param size Current size.
-         * @param c The candidate c.
-         * @return Number of additional cuts.
-         */
-        inline u32 count_cut_gain(AlignedVector<u32> &perm, u32 size, u32 c) {
-            return m_cut_gain[size - 1][c] + m_cross_matrix.get_entry(perm[size - 1], c);
-        }
-
-        /**
          * Initialize the Cross-Matrix.
          */
         inline void initialize_CrossMatrix() {
-            for (u32 i = 0; i < m_graph.n_B; ++i) {
-                for (u32 j = 0; j < m_graph.n_B; ++j) {
-                    u32 c = 0;
+            ASSERT(m_graph.is_finalized);
+
+            for (u32 i = 0; i < n; ++i) {
+                for (u32 j = i+1; j < n; ++j) {
+                    u32 c1 = 0;
+                    u32 c2 = 0;
                     // loop through the edges
                     for (size_t k = 0; k < m_graph.adj_list[i].size(); ++k) {
                         for (size_t l = 0; l < m_graph.adj_list[j].size(); ++l) {
                             Edge a1 = m_graph.adj_list[i][k];
                             Edge a2 = m_graph.adj_list[j][l];
 
-                            c += (a2.vertex < a1.vertex) * (a1.weight * a2.weight);
+                            u32 cuts = a1.weight * a2.weight;
+
+                            c1 += (a2.vertex < a1.vertex) * cuts;
+                            c2 += (a1.vertex < a2.vertex) * cuts;
                         }
                     }
-                    m_cross_matrix.set_entry(i, j, c);
-                }
-            }
+                    m_cross_matrix.matrix[i * n + j] = c1;
+                    m_cross_matrix.matrix[j * n + i] = c2;
 
-            for (u32 i = 0; i < m_graph.n_B; ++i) {
-                for (u32 j = i + 1; j < m_graph.n_B; ++j) {
-                    u32 e1 = m_cross_matrix.get_entry(i, j);
-                    u32 e2 = m_cross_matrix.get_entry(j, i);
-                    if(e1 == 0 && e2 > 0){
-                        m_perfect_pattern.add(i, j);
-                    }
-                    if(e2 == 0 && e1 > 0){
-                        m_perfect_pattern.add(j, i);
-                    }
-                }
-            }
-            m_perfect_pattern.finalize();
-        }
-
-        /**
-         * Computes an initial greedy solution.
-         */
-        inline void initial_greedy() {
-            u32 size = m_graph.n_B;
-
-            // get best current solution
-            std::copy(m_solution.begin(), m_solution.end(), m_permutation.begin());
-
-            u32 failed_swaps = 0;
-            while (failed_swaps < 100) {
-
-                u32 rnd_idx1 = random() % size;
-                u32 rnd_idx2 = random() % size;
-
-                u32 v1 = m_permutation[rnd_idx1];
-                u32 v2 = m_permutation[rnd_idx2];
-
-                m_permutation[rnd_idx1] = v2;
-                m_permutation[rnd_idx2] = v1;
-                // TODO: a specialized function, that determines the count after a swap
-                if (!check_new_solution(m_permutation)) {
-                    // no new solution, so restore
-                    m_permutation[rnd_idx1] = v1;
-                    m_permutation[rnd_idx2] = v2;
-                    failed_swaps += 1;
-                } else {
-                    failed_swaps = 0;
+                    if (c1 == 0 && c2 > 0) { m_perfect_pattern.add(i, j); }
+                    if (c2 == 0 && c1 > 0) { m_perfect_pattern.add(j, i); }
                 }
             }
         }
-
-#define TREE_UP 0
-#define TREE_STAY 1
 
         /**
          * Iteratively searches for a solution.
@@ -271,87 +183,70 @@ namespace CrossGuard {
             execute_DCO_depth_0();
             m_cuts[0] = 0;
             m_intra_min_cuts[0] = calculate_intraMinCuts_depth_0();
+            m_inter_min_cuts[0] = 0;
 
             int depth = 0;
-            u32 tree_movement = TREE_STAY;
 
             while (depth >= 0) {
 
-                if (tree_movement == TREE_UP) {
-                    // go up
+                // release the current element and move further
+                m_is_used[m_candidate_order[depth].candidates[std::max(0, m_counter[depth])].c] = false;
+                m_counter[depth] += 1;
+
+                // check if at the end
+                if (m_counter[depth] == (s32) m_candidate_order[depth].size) {
                     depth -= 1;
-                    tree_movement = TREE_STAY;
-                    continue;
-                } else {
-                    // release the current element and move further
-                    if (m_counter[depth] >= 0) {
-                        m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
-                    }
-                    m_counter[depth] += 1;
-
-                    // check if at the end
-                    if (m_counter[depth] == (s32) m_candidate_order[depth].get_end()) {
-                        tree_movement = TREE_UP;
-                        continue;
-                    }
-
-                    // check if we are violating a perfect 0/j pattern
-                    if(depth > 0) {
-                        bool violated = false;
-                        for (u32 i = (u32) m_counter[depth]; i < m_candidate_order[depth].get_end(); ++i) {
-                            u32 included_vertex = m_permutation[depth - 1];
-                            u32 not_included_vertex = m_candidate_order[depth][i].c;
-                            if (m_perfect_pattern.matches(not_included_vertex, included_vertex)) {
-                                violated = true;
-                                break;
-                            }
-                        }
-                        if (violated) {
-                            // std::cout << "Found Violation" << std::endl;
-                            m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
-                            tree_movement = TREE_UP;
-                            continue;
-                        }
-                    }
-
-                    // check if we can abort early
-                    u32 current_n_cuts = m_cuts[depth]; //count_cuts(m_permutation, depth);
-                    u32 min_cuts_remaining = get_minCutsRemaining(depth);
-                    if (current_n_cuts + min_cuts_remaining >= m_solution_n_cuts) {
-                        // release the element, because we go up
-                        m_is_used[m_candidate_order[depth][m_counter[depth]].c] = false;
-                        tree_movement = TREE_UP;
-                        continue;
-                    }
-
-                    // valid element found
-                    Candidate vertex = m_candidate_order[depth][m_counter[depth]];
-                    m_permutation[depth] = vertex.c;
-                    m_is_used[vertex.c] = true;
-
-                    // check if we arrived at the bottom
-                    if ((u32) (depth + 1) == m_graph.n_B) {
-                        if (m_cuts[depth] + vertex.gain < m_solution_n_cuts) {
-                            std::copy(m_permutation.begin(), m_permutation.end(), m_solution.begin());
-                            m_solution_n_cuts = m_cuts[depth] + vertex.gain;
-                        }
-
-                        // release the element, because we go up
-                        m_is_used[vertex.c] = false;
-                        tree_movement = TREE_UP;
-                        continue;
-                    }
-
-                    // move down and reset counter
-                    depth += 1;
-                    m_cuts[depth] = m_cuts[depth - 1] + vertex.gain;
-                    m_counter[depth] = -1;
-                    execute_DCO(depth);
-                    m_intra_min_cuts[depth] = m_intra_min_cuts[depth - 1] - calculate_intraMinCuts(depth);
-
-                    tree_movement = TREE_STAY;
                     continue;
                 }
+
+                // check if we are violating a perfect 0/j pattern
+                if (depth > 0) {
+                    bool violated = false;
+                    for (u32 i = (u32) m_counter[depth]; i < m_candidate_order[depth].size; ++i) {
+                        u32 included_vertex = m_permutation[depth - 1];
+                        u32 not_included_vertex = m_candidate_order[depth].candidates[i].c;
+                        if (m_perfect_pattern.matches(not_included_vertex, included_vertex)) {
+                            violated = true;
+                            break;
+                        }
+                    }
+                    if (violated) {
+                        depth -= 1;
+                        continue;
+                    }
+                }
+
+                // check if we can abort early
+                if (m_cuts[depth] + m_intra_min_cuts[depth] + m_inter_min_cuts[depth] >= m_solution_n_cuts) {
+                    // release the element, because we go up
+                    depth -= 1;
+                    continue;
+                }
+
+                // valid element found
+                Candidate vertex = m_candidate_order[depth].candidates[m_counter[depth]];
+                m_permutation[depth] = vertex.c;
+                m_is_used[vertex.c] = true;
+
+                // check if we arrived at the bottom
+                if ((u32) depth == n - 1) {
+                    if (m_cuts[depth] + vertex.gain < m_solution_n_cuts) {
+                        std::copy(m_permutation.begin(), m_permutation.end(), m_solution.begin());
+                        m_solution_n_cuts = m_cuts[depth] + vertex.gain;
+                    }
+
+                    // release the element, because we go up
+                    m_is_used[vertex.c] = false;
+                    depth -= 1;
+                    continue;
+                }
+
+                // move down and reset counter
+                depth += 1;
+                m_cuts[depth] = m_cuts[depth - 1] + vertex.gain;
+                m_counter[depth] = -1;
+                execute_DCO(depth);
+                m_intra_min_cuts[depth] = m_intra_min_cuts[depth - 1] - calculate_intraMinCuts(depth);
             }
         }
 
@@ -359,10 +254,13 @@ namespace CrossGuard {
          * Executes Dynamic-Candidate-Ordering at depth 0.
          */
         inline void execute_DCO_depth_0() {
-            for (u32 i = 0; i < m_graph.n_B; ++i) {
-                m_candidate_order[0].push_back({i, 0, m_graph.medians[i]});
-                m_cut_gain[0][i] = 0;
+            m_candidate_order[0].initialize_median_vec(n);
+            for (u32 i = 0; i < n; ++i) {
+                m_candidate_order[0].candidates[i] = {i, 0};
+                m_candidate_order[0].median_candidate[i] = {i, m_graph.medians[i]};
+                m_candidate_order[0].max_median = std::max(m_candidate_order[0].max_median, m_graph.medians[i]);
             }
+            m_candidate_order[0].size = n;
             m_candidate_order[0].sort();
         };
 
@@ -372,35 +270,21 @@ namespace CrossGuard {
          * @param depth Current depth of the algorithm.
          */
         inline void execute_DCO(int depth) {
-            m_candidate_order[depth].clear();
-            for (u32 i = 0; i < m_candidate_order[depth - 1].get_end(); ++i) {
-                Candidate vertex = m_candidate_order[depth - 1][i];
-                if (!m_is_used[vertex.c]) {
-                    u32 c = vertex.c;
-                    u32 gain = count_cut_gain(m_permutation, depth, c);
-                    m_candidate_order[depth].push_back({c, gain, vertex.median});
-                    m_cut_gain[depth][c] = gain;
-                }
+            u32 inter_cuts = 0;
+            u32 idx = 0;
+            for (u32 i = 0; i < m_candidate_order[depth - 1].size; ++i) {
+                Candidate vertex = m_candidate_order[depth - 1].candidates[i];
+
+                u32 extra_gain = m_cross_matrix.matrix[m_permutation[depth - 1] * n + vertex.c];
+
+                m_candidate_order[depth].candidates[idx] = vertex;
+                m_candidate_order[depth].candidates[idx].gain += extra_gain;
+
+                inter_cuts += (1 - m_is_used[vertex.c]) * (vertex.gain + extra_gain);
+                idx += (1 - m_is_used[vertex.c]);
             }
-
-            // m_candidate_order[depth].sort();
-        }
-
-        /**
-         * Gets the minimum amount of remaining cuts.
-         *
-         * @param depth Current depth of the algorithm
-         * @return Number of cuts.
-         */
-        inline u32 get_minCutsRemaining(int depth) {
-            u32 n_cuts = 0;
-            // get remaining cuts between still to place elements
-            n_cuts += m_intra_min_cuts[depth];
-
-            // get remaining cuts between placed and still to place elements
-            n_cuts += get_interMinCuts(depth);
-
-            return n_cuts;
+            m_candidate_order[depth].size = idx;
+            m_inter_min_cuts[depth] = inter_cuts;
         }
 
         /**
@@ -411,12 +295,15 @@ namespace CrossGuard {
          */
         inline u32 calculate_intraMinCuts_depth_0() {
             u32 n_cuts = 0;
-            for (u32 i = 0; i < m_candidate_order[0].get_end(); ++i) {
-                for (u32 j = i + 1; j < m_candidate_order[0].get_end(); ++j) {
-                    u32 c1 = m_candidate_order[0][i].c;
-                    u32 c2 = m_candidate_order[0][j].c;
+            for (u32 i = 0; i < m_candidate_order[0].size; ++i) {
+                for (u32 j = i + 1; j < m_candidate_order[0].size; ++j) {
+                    u32 c1 = m_candidate_order[0].candidates[i].c;
+                    u32 c2 = m_candidate_order[0].candidates[j].c;
 
-                    n_cuts += std::min(m_cross_matrix.get_entry(c1, c2), m_cross_matrix.get_entry(c2, c1));
+                    u32 cut1 = m_cross_matrix.matrix[c1 * n + c2];
+                    u32 cut2 = m_cross_matrix.matrix[c2 * n + c1];
+
+                    n_cuts += std::min(cut1, cut2);
                 }
             }
             return n_cuts;
@@ -431,25 +318,14 @@ namespace CrossGuard {
          */
         inline u32 calculate_intraMinCuts(int depth) {
             u32 n_cuts = 0;
-            u32 c2 = m_permutation[depth - 1];
-            for (u32 i = 0; i < m_candidate_order[depth].get_end(); ++i) {
-                u32 c1 = m_candidate_order[depth][i].c;
+            u32 c1 = m_permutation[depth - 1];
+            for (u32 i = 0; i < m_candidate_order[depth].size; ++i) {
+                u32 c2 = m_candidate_order[depth].candidates[i].c;
 
-                n_cuts += std::min(m_cross_matrix.get_entry(c1, c2), m_cross_matrix.get_entry(c2, c1));
-            }
-            return n_cuts;
-        }
+                u32 cut1 = m_cross_matrix.matrix[c1 * n + c2];
+                u32 cut2 = m_cross_matrix.matrix[c2 * n + c1];
 
-        /**
-         * Gets the number of cuts between placed and still to be placed candidates.
-         *
-         * @param depth Current depth of the algorithm.
-         * @return Number of cuts.
-         */
-        inline u32 get_interMinCuts(int depth) {
-            u32 n_cuts = 0;
-            for (u32 i = 0; i < m_candidate_order[depth].get_end(); ++i) {
-                n_cuts += m_candidate_order[depth][i].gain;
+                n_cuts += std::min(cut1, cut2);
             }
             return n_cuts;
         }

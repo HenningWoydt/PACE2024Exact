@@ -38,7 +38,7 @@ namespace CrossGuard {
         /**
          * Finds all components and creates sub-graphs with translation tables.
          */
-        void find_components() {
+        inline void find_components() {
             identify_components();
             create_components();
         }
@@ -48,7 +48,7 @@ namespace CrossGuard {
          *
          * @return Vector with sub-graphs.
          */
-        AlignedVector<Graph> get_components() const {
+        inline AlignedVector<Graph> get_components() const {
             return m_sub_graphs;
         }
 
@@ -59,7 +59,7 @@ namespace CrossGuard {
          * @param order The order of the solutions.
          * @return The solution of the original graph.
          */
-        AlignedVector<u32> back_propagate(const AlignedVector<AlignedVector<u32>> &sols, const AlignedVector<u32> &order) {
+        inline AlignedVector<u32> back_propagate(const AlignedVector<AlignedVector<u32>> &sols, const AlignedVector<u32> &order) {
             AlignedVector<u32> new_sol;
 
             for (u32 id: order) {
@@ -78,7 +78,7 @@ namespace CrossGuard {
          *
          * @return The partition graph.
          */
-        Graph get_component_graph() {
+        inline Graph get_component_graph() {
             u32 n_A = m_graph.n_A;
             u32 n_B = (u32) m_components_B.size();
 
@@ -99,7 +99,7 @@ namespace CrossGuard {
         /**
          * Finds all independent components.
          */
-        void identify_components() {
+        inline void identify_components() {
             m_component_id.resize(m_graph.n_B, -1);
 
             AlignedVector<int> A_processed(m_graph.n_A, -1);
@@ -204,7 +204,7 @@ namespace CrossGuard {
         /**
          * Creates all components.
          */
-        void create_components() {
+        inline void create_components() {
             // create graph and translation table
             for (u32 i = 0; i < (u32) m_n_components; ++i) {
                 // create translation table
@@ -247,7 +247,7 @@ namespace CrossGuard {
          * @param tt The Translation Table.
          * @return The solution of the original graph.
          */
-        static AlignedVector<u32> back_propagate(const AlignedVector<u32> &sol, const TranslationTable &tt) {
+        inline static AlignedVector<u32> back_propagate(const AlignedVector<u32> &sol, const TranslationTable &tt) {
             AlignedVector<u32> new_sol;
 
             // put the partial solution into the complete solution
