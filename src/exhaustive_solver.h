@@ -199,26 +199,8 @@ namespace CrossGuard {
                     continue;
                 }
 
-                // check if we are violating a perfect 0/j pattern
-                if (depth > 0) {
-                    bool violated = false;
-                    for (u32 i = (u32) m_counter[depth]; i < m_candidate_order[depth].size; ++i) {
-                        u32 included_vertex = m_permutation[depth - 1];
-                        u32 not_included_vertex = m_candidate_order[depth].candidates[i].c;
-                        if (m_perfect_pattern.matches(not_included_vertex, included_vertex)) {
-                            violated = true;
-                            break;
-                        }
-                    }
-                    if (violated) {
-                        depth -= 1;
-                        continue;
-                    }
-                }
-
-                // check if we can abort early
+                // check if we can abort based on the number of cuts remaining
                 if (m_cuts[depth] + m_intra_min_cuts[depth] + m_inter_min_cuts[depth] >= m_solution_n_cuts) {
-                    // release the element, because we go up
                     depth -= 1;
                     continue;
                 }
@@ -226,7 +208,6 @@ namespace CrossGuard {
                 // valid element found
                 Candidate vertex = m_candidate_order[depth].candidates[m_counter[depth]];
                 m_permutation[depth] = vertex.c;
-                m_is_used[vertex.c] = true;
 
                 // check if we arrived at the bottom
                 if ((u32) depth == n - 1) {
@@ -235,18 +216,25 @@ namespace CrossGuard {
                         m_solution_n_cuts = m_cuts[depth] + vertex.gain;
                     }
 
-                    // release the element, because we go up
-                    m_is_used[vertex.c] = false;
+                    // go up
                     depth -= 1;
                     continue;
                 }
 
+                // mark element as found
+                m_is_used[vertex.c] = true;
+
                 // move down and reset counter
                 depth += 1;
-                m_cuts[depth] = m_cuts[depth - 1] + vertex.gain;
+                bool abort = execute_DCO(depth);
+                if(abort){
+                    // go up
+                    depth -= 1;
+                    continue;
+                }
+
+                // reset the counter
                 m_counter[depth] = -1;
-                execute_DCO(depth);
-                m_intra_min_cuts[depth] = m_intra_min_cuts[depth - 1] - calculate_intraMinCuts(depth);
             }
         }
 
@@ -269,22 +257,52 @@ namespace CrossGuard {
          *
          * @param depth Current depth of the algorithm.
          */
-        inline void execute_DCO(int depth) {
+        inline bool execute_DCO(int depth) {
+            // get last added vertex
+            Candidate last_added_vertex = m_candidate_order[depth - 1].candidates[m_counter[depth - 1]];
+
+            // update the current number of cuts
+            m_cuts[depth] = m_cuts[depth - 1] + last_added_vertex.gain;
+
+            // determine the number of cuts between placed and still to be placed vertices
             u32 inter_cuts = 0;
+
+            // count the number of cuts that get removed by adding the last vertex
+            u32 n_intra_cuts_removed = 0;
+
             u32 idx = 0;
             for (u32 i = 0; i < m_candidate_order[depth - 1].size; ++i) {
+                // curr vertex
                 Candidate vertex = m_candidate_order[depth - 1].candidates[i];
+                u32 vertex_not_used = (1 - m_is_used[vertex.c]); // 0 if vertex is used, 1 else
 
-                u32 extra_gain = m_cross_matrix.matrix[m_permutation[depth - 1] * n + vertex.c];
+                // check if a pattern is violated
+                if (m_perfect_pattern.matches(vertex.c, last_added_vertex.c)) {
+                    return true;
+                }
 
+                // update inter cuts
+                u32 extra_gain = m_cross_matrix.matrix[last_added_vertex.c * n + vertex.c];
+                inter_cuts += vertex_not_used * (vertex.gain + extra_gain);
+
+                // update intra cuts
+                n_intra_cuts_removed += vertex_not_used * std::min(extra_gain, m_cross_matrix.matrix[vertex.c * n + last_added_vertex.c]);
+
+                // place vertex
                 m_candidate_order[depth].candidates[idx] = vertex;
                 m_candidate_order[depth].candidates[idx].gain += extra_gain;
-
-                inter_cuts += (1 - m_is_used[vertex.c]) * (vertex.gain + extra_gain);
-                idx += (1 - m_is_used[vertex.c]);
+                idx += vertex_not_used;
             }
+            // set size
             m_candidate_order[depth].size = idx;
+
+            // update the intra cuts
+            m_intra_min_cuts[depth] = m_intra_min_cuts[depth - 1] - n_intra_cuts_removed;
+
+            // update the inter cuts
             m_inter_min_cuts[depth] = inter_cuts;
+
+            return false;
         }
 
         /**
@@ -328,6 +346,23 @@ namespace CrossGuard {
                 n_cuts += std::min(cut1, cut2);
             }
             return n_cuts;
+        }
+
+        /**
+         * Determines if a pattern is violated.
+         *
+         * @param depth Current depth.
+         * @return True if a pattern is violated, false else.
+         */
+        inline bool pattern_violated(int depth){
+            for (u32 i = 0; i < m_candidate_order[depth].size; ++i) {
+                u32 included_vertex = m_permutation[depth - 1];
+                u32 not_included_vertex = m_candidate_order[depth].candidates[i].c;
+                if (m_perfect_pattern.matches(not_included_vertex, included_vertex)) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
 

@@ -218,6 +218,7 @@ namespace CrossGuard {
     }
 
     u64 hash(const AlignedVector<Edge> &vec);
+
 }
 
 #endif //PACE2024EXACT_MISC_H

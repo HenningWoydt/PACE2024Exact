@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <vector>
-
 #include <boost/align.hpp>
 
 namespace CrossGuard {
