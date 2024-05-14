@@ -22,7 +22,6 @@ namespace CrossGuard {
      */
     class CandidateManager {
     public:
-        u32 size;
         AlignedVector<Candidate> candidates;
 
         u32 max_median = 0;
@@ -35,7 +34,6 @@ namespace CrossGuard {
          * @param n Number of elements.
          */
         explicit CandidateManager(u32 n) {
-            size = 0;
             candidates.resize(n);
         }
 
@@ -47,7 +45,7 @@ namespace CrossGuard {
         /**
          * Sorts the CandidateManager ascending.
          */
-        inline void sort() {
+        inline void sort(u32 size) {
             AlignedVector<std::pair<u32, u32>> median_candidate_helper(median_candidate.size());
             AlignedVector<Candidate> candidates_helper(candidates.size());
             AlignedVector<u32> counting;
@@ -82,7 +80,7 @@ namespace CrossGuard {
             median_candidate.shrink_to_fit();
         }
 
-        inline void print() {
+        inline void print(u32 size) {
             for (u32 i = 0; i < size; ++i) {
                 std::cout << "(" << candidates[i].c << ", " << candidates[i].gain << "), ";
             }

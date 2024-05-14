@@ -8,6 +8,11 @@
 
 namespace CrossGuard {
 
+    // TODO: Remove vertices that are only connected to a_1 or a_n. Their placement will be at the front or back.
+    // TODO: How to include Domination Reduction
+    // TODO: Is there a way to handle vertices b with only one neighbor?
+
+
 /**
  * Class to solve the problem.
  */
@@ -46,7 +51,7 @@ namespace CrossGuard {
             component_solver.solve();
             AlignedVector<u32> component_order = component_solver.get_solution();
 
-            // std::cout << "\tNumber of components: " << component_order.size() << std::endl;
+            std::cout << "\tNumber of components: " << component_order.size() << std::endl;
 
             // solve each component
             AlignedVector<AlignedVector<u32>> solutions;
@@ -58,7 +63,7 @@ namespace CrossGuard {
                 Graph reduced_g = reducer.reduce();
                 ASSERT(reduced_g.is_finalized);
 
-                // std::cout << "\t\tComponent reduced from " << g.n_B << " to " << reduced_g.n_B << std::flush;
+                std::cout << "\t\tComponent reduced from " << g.n_B << " to " << reduced_g.n_B << std::flush;
 
                 ExhaustiveSolver s(reduced_g);
                 AlignedVector<u32> median_vector = reduced_g.get_median_solution();
@@ -66,7 +71,7 @@ namespace CrossGuard {
                 s.solve();
                 AlignedVector<u32> exhaustive_sol = s.get_solution();
 
-                // std::cout << " -- Component solved" << std::endl;
+                std::cout << " -- Component solved" << std::endl;
 
                 AlignedVector<unsigned int> reduced_sol = reducer.back_propagate(exhaustive_sol);
 
