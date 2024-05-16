@@ -4,11 +4,14 @@
 #include "graph.h"
 #include "partitioner.h"
 #include "exhaustive_solver.h"
-#include "reducer.h"
+#include "twin_reducer.h"
+#include "useless_reducer.h"
+#include "front_back_reducer.h"
+#include "one_vertex_partitioner.h"
+#include "one_vertex_partition_manager.h"
 
 namespace CrossGuard {
 
-    // TODO: Remove vertices that are only connected to a_1 or a_n. Their placement will be at the front or back.
     // TODO: How to include Domination Reduction
     // TODO: Is there a way to handle vertices b with only one neighbor?
 
@@ -36,7 +39,7 @@ namespace CrossGuard {
         /**
          * Solves the problem.
          */
-        inline void solve() {
+        inline void solve(bool verbose=false) {
             sp = std::chrono::steady_clock::now();
             ASSERT(m_graph.is_finalized);
 
@@ -51,33 +54,70 @@ namespace CrossGuard {
             component_solver.solve();
             AlignedVector<u32> component_order = component_solver.get_solution();
 
-            std::cout << "\tNumber of components: " << component_order.size() << std::endl;
+            AlignedVector<Graph> partitions = partitioner.get_components();
+
+            if(verbose){
+                AlignedVector<u32> sizes;
+                for(auto &g_part : partitions){sizes.push_back(g_part.n_B);}
+                std::cout << "\tNumber of components: " << component_order.size() << " ";
+                print(sizes);
+            }
 
             // solve each component
             AlignedVector<AlignedVector<u32>> solutions;
-            for (auto &g: partitioner.get_components()) {
+            for (auto &g: partitions) {
                 // solve sub-graph
                 ASSERT(g.is_finalized);
+                // g.print();
 
-                Reducer reducer(g, true);
-                Graph reduced_g = reducer.reduce();
-                ASSERT(reduced_g.is_finalized);
+                // further partition the graph
+                OneVertexPartitionManager one_vertex_partition_manager(g);
+                AlignedVector<Graph> new_partitions = one_vertex_partition_manager.get_components();
 
-                std::cout << "\t\tComponent reduced from " << g.n_B << " to " << reduced_g.n_B << std::flush;
+                if(verbose){
+                    AlignedVector<u32> sizes;
+                    for(auto &g_part : new_partitions){sizes.push_back(g_part.n_B);}
+                    std::cout << "\t\tFurther divided: " << new_partitions.size() << " ";
+                    print(sizes);
+                }
 
-                ExhaustiveSolver s(reduced_g);
-                AlignedVector<u32> median_vector = reduced_g.get_median_solution();
-                s.set_initial_solution(median_vector);
-                s.solve();
-                AlignedVector<u32> exhaustive_sol = s.get_solution();
+                AlignedVector<AlignedVector<u32>> one_vertex_solutions;
+                for(auto &g_part : new_partitions) {
+                    ASSERT(g_part.is_finalized);
+                    // g_part.print();
 
-                std::cout << " -- Component solved" << std::endl;
+                    UselessReducer useless_reducer(g_part);
+                    Graph useless_g = useless_reducer.reduce();
+                    ASSERT(useless_g.is_finalized);
 
-                AlignedVector<unsigned int> reduced_sol = reducer.back_propagate(exhaustive_sol);
+                    FrontBackReducer fb_reducer(useless_g);
+                    Graph fb_g = fb_reducer.reduce();
+                    ASSERT(fb_g.is_finalized);
 
-                solutions.push_back(reduced_sol);
+                    TwinReducer reducer(fb_g);
+                    Graph reduced_g = reducer.reduce();
+                    ASSERT(reduced_g.is_finalized);
+
+                    if (verbose) {
+                        std::cout << "\t\t\tComponent reduced from " << g_part.n_B << " to " << useless_g.n_B << " to " << fb_g.n_B << " to " << reduced_g.n_B << std::flush;
+                    }
+
+                    ExhaustiveSolver s(reduced_g);
+                    AlignedVector<u32> median_vector = reduced_g.get_median_solution();
+                    s.set_initial_solution(median_vector);
+                    s.solve();
+                    AlignedVector<u32> temp = s.get_solution();
+
+                    if (verbose) { std::cout << " -- Component solved" << std::endl; }
+
+                    temp = reducer.back_propagate(temp);
+                    temp = fb_reducer.back_propagate(temp);
+                    temp = useless_reducer.back_propagate(temp);
+                    one_vertex_solutions.push_back(temp);
+                }
+                AlignedVector<u32> temp2 = one_vertex_partition_manager.back_propagate(one_vertex_solutions);
+                solutions.push_back(temp2);
             }
-
             m_solution = partitioner.back_propagate(solutions, component_order);
 
             ep = std::chrono::steady_clock::now();

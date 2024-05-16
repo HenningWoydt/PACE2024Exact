@@ -32,7 +32,7 @@ namespace CrossGuard {
             ASSERT((i * m_n) + j < m_n * m_n);
             ASSERT(i < m_n);
             ASSERT(j < m_n);
-            return m_matches[i * m_n + j] == 1;
+            return m_matches[i * m_n + j];
         }
     };
 

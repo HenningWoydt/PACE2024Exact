@@ -14,7 +14,7 @@
 
 namespace CrossGuard {
 
-    TEST(OwnAll, Random) {
+    TEST(OwnSolver, Random) {
         for (size_t n_A = 1; n_A < max_n_A; ++n_A) {
             for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
                 for (size_t j = 0; j < n_files; ++j) {
@@ -22,14 +22,14 @@ namespace CrossGuard {
                     std::string sol_path = "../data/test/own/random/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
                     if (file_exists(g_path)) {
-                        compare_all(g_path, sol_path);
+                        compare_final_solver(g_path, sol_path);
                     }
                 }
             }
         }
     }
 
-    TEST(OwnAll, Partition) {
+    TEST(OwnSolver, Partition) {
         for (size_t n_par = 2; n_par < max_n_par; ++n_par) {
             for (size_t n_A = 1; n_A < max_n_A; ++n_A) {
                 for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
@@ -38,7 +38,7 @@ namespace CrossGuard {
                         std::string s_path = "../data/test/own/partition/" + std::to_string(n_par) + "/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
                         if (file_exists(g_path)) {
-                            compare_all(g_path, s_path);
+                            compare_final_solver(g_path, s_path);
                         }
                     }
                 }
@@ -46,7 +46,7 @@ namespace CrossGuard {
         }
     }
 
-    TEST(OwnAll, ReductionTwins) {
+    TEST(OwnSolver, ReductionTwins) {
         for (size_t n_red = 1; n_red < max_n_red; ++n_red) {
             for (size_t n_A = 1; n_A < max_n_A; ++n_A) {
                 for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
@@ -55,8 +55,23 @@ namespace CrossGuard {
                         std::string s_path = "../data/test/own/reduction_twins/" + std::to_string(n_red) + "/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
 
                         if (file_exists(g_path)) {
-                            compare_all(g_path, s_path);
+                            compare_final_solver(g_path, s_path);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    TEST(OwnSolver, OneVertexPartition) {
+        for (size_t n_A = 1; n_A < max_n_A; ++n_A) {
+            for (size_t n_B = 1; n_B < max_n_B; ++n_B) {
+                for (size_t j = 0; j < n_files; ++j) {
+                    std::string g_path = "../data/test/own/one_vertex_partition/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "/" + std::to_string(j) + ".gr";
+                    std::string s_path = "../data/test/own/one_vertex_partition/" + std::to_string(n_A) + "_" + std::to_string(n_B) + "-sol/" + std::to_string(j) + ".sol";
+
+                    if (file_exists(g_path)) {
+                        compare_final_solver(g_path, s_path);
                     }
                 }
             }

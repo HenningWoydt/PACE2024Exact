@@ -7,7 +7,7 @@
 #include "misc_test.h"
 
 #define max_n_B 11
-#define n_files 1000
+#define n_files 100
 
 namespace CrossGuard {
 

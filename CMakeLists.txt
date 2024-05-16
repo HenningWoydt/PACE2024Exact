@@ -12,7 +12,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -g3 -O3 -DNDEBUG -finline-functions -flto -fwhole-program -ftree-vectorize -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -finline-functions -flto -fwhole-program -ftree-vectorize -funroll-loops -falign-loops -march=native -Wall -Wextra -pedantic")
 # set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -march=native -Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
 
@@ -32,8 +32,12 @@ add_executable(PACE2024Exact
         src/cross_matrix.h
         src/partitioner.h
         src/translation_table.h
-        src/reducer.h
-        src/solver.h)
+        src/twin_reducer.h
+        src/solver.h
+        src/front_back_reducer.h
+        src/useless_reducer.h
+        src/one_vertex_partitioner.h
+        src/one_vertex_partition_manager.h)
 
 add_executable(PACE2024Exact_test
         src/macros.h
@@ -50,7 +54,7 @@ add_executable(PACE2024Exact_test
         src/cross_matrix.h
         src/partitioner.h
         src/translation_table.h
-        src/reducer.h
+        src/twin_reducer.h
         src/solver.h
         tests/misc_test.cpp
         tests/misc_test.h
@@ -58,7 +62,14 @@ add_executable(PACE2024Exact_test
         tests/own_random_test.cpp
         tests/own_partition_test.cpp
         tests/own_reduction_twins_test.cpp
-        tests/own_all_tests.cpp)
+        tests/own_all_tests.cpp
+        src/front_back_reducer.h
+        src/useless_reducer.h
+        tests/own_front_back_reduction_test.cpp
+        src/one_vertex_partitioner.h
+        tests/own_one_vertex_partition.cpp
+        src/one_vertex_partition_manager.h
+        tests/own_solver_test.cpp)
 
 target_link_libraries(PACE2024Exact_test GTest::gtest_main)
 include(GoogleTest)

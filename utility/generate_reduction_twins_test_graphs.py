@@ -5,7 +5,7 @@ from typing import List
 FILE_DIR = "../data/test/own/reduction_twins"
 MAX_A = 50
 MAX_B = 10
-N_FILES = 100
+N_FILES = 1000
 N_REDUCTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
