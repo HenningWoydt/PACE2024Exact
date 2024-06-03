@@ -11,7 +11,7 @@
 namespace CrossGuard {
 
     class PerfectPattern {
-    private:
+    public:
         u32 m_n = 0;
         AlignedVector<u8> m_matches;
 
