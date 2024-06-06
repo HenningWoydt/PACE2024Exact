@@ -115,9 +115,6 @@ namespace CrossGuard {
             // sorts both ends by neighborhood size
             std::sort(m_front.begin(), m_front.end(), [&](u32 i, u32 j){return m_graph.adj_list[i].size() < m_graph.adj_list[j].size();});
             std::sort(m_back.begin(), m_back.end(), [&](u32 i, u32 j){return m_graph.adj_list[i].size() > m_graph.adj_list[j].size();});
-            // std::cout << "front and back" << std::endl;
-            // print(m_front);
-            // print(m_back);
         }
 
         Graph reduce_front_back_reductions(){
@@ -133,10 +130,6 @@ namespace CrossGuard {
                     m_back.pop_back();
                 }
             }
-
-            // std::cout << "front and back" << std::endl;
-            // print(m_front);
-            // print(m_back);
 
             u32 n_A = m_graph.n_A;
             u32 n_B = m_graph.n_B - m_front.size() - m_back.size();

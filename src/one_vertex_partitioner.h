@@ -11,9 +11,9 @@ namespace CrossGuard {
 
     /**
      * Assume the scenario:
-     * AAAAAAAAAAAAAAAA C   G DDDDDDDDDDDDDDDDDD
-     * xxxxxxxxxxxxxxxx  \ /  xxxxxxxxxxxxxxxxxx
-     * BBBBBBBBBBBBBBBB   E   FFFFFFFFFFFFFFFFFF
+     * AAAAAAAAAAAAAAAA C ... G DDDDDDDDDDDDDDDDDD
+     * xxxxxxxxxxxxxxxx  \   /  xxxxxxxxxxxxxxxxxx
+     * BBBBBBBBBBBBBBBB    E    FFFFFFFFFFFFFFFFFF
      *
      * AC and B form one component, and GD and F form one component. Both
      * components are only connected via the vertex E. Solving (AC,B) and (GD,F)
@@ -153,8 +153,6 @@ namespace CrossGuard {
         void identify_components() {
             AlignedVector<u32> queue;
             for (u32 i = 0; i < m_graph.n_B; ++i) {
-                // std::cout << "i = " << i << std::endl;
-                // print(m_graph.adj_list[i]);
                 if (can_be_connecting_vertex(i)){
                     // determine if this is a special vertex
                     ASSERT(m_graph.adj_list[i][0].vertex < m_graph.adj_list[i][1].vertex);
@@ -167,9 +165,6 @@ namespace CrossGuard {
                             m_component_id[b.vertex] = 0;
                         }
                     }
-
-                    // std::cout << "i = " << i << std::endl;
-                    // print(m_component_id);
 
                     // check the right part
                     bool right_part_touched = false;
@@ -191,7 +186,6 @@ namespace CrossGuard {
                         // the right vertex in A has not been touched, this is a special vertex.
                         connecting_vertex = i;
                         n_comp = 2;
-                        // std::cout << "yes" << std::endl;
 
                         for (u32 j = 0; j < m_graph.n_B; ++j) {
                             if (j != connecting_vertex) {

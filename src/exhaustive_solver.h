@@ -13,6 +13,8 @@
 #include "cross_matrix.h"
 #include "candidate_manager.h"
 #include "perfect_pattern.h"
+#include "solved_vertex_group.h"
+#include "translation_table.h"
 
 namespace CrossGuard {
 
@@ -44,6 +46,13 @@ namespace CrossGuard {
 
         // min number of cuts possible
         u32 m_min_n_cuts;
+
+        // solved vertex groups
+        AlignedVector<SolvedVertexGroup> m_vertex_groups;
+        AlignedVector<u64*> m_vertex_to_group;
+        u64 vertex_group_size = 40;
+        u64 m_vertex_group_id = 1;
+        u64 useless_var = 0;
 
     public:
         /**
@@ -87,6 +96,10 @@ namespace CrossGuard {
             if (m_solution_n_cuts == std::numeric_limits<u32>::max()) {
                 std::iota(m_solution.begin(), m_solution.end(), 0);
                 check_new_solution(m_solution);
+            }
+
+            if(n == 1){
+                return;
             }
 
             // exhaustive search
@@ -242,7 +255,58 @@ namespace CrossGuard {
                 m_candidate_order[0].max_median = std::max(m_candidate_order[0].max_median, m_graph.medians[i]);
             }
             m_candidate_order[0].sort(n);
+
+            // initialize_svg();
         };
+
+        inline void initialize_svg(){
+            // calculate the solved vertex groups based on the median ordering
+            m_vertex_to_group.resize(n, &useless_var);
+            for(u64 i = 0; i + vertex_group_size < n; i += vertex_group_size){
+                SolvedVertexGroup svg;
+                u32 min_n_cut = 0;
+
+                for(u64 j = 0; j < vertex_group_size; ++j){
+                    u32 a = m_candidate_order[0].candidates[i + j].c;
+                    svg.add_vertex(a);
+                    for(u64 k = j + 1; k < vertex_group_size; ++k){
+                        u32 b = m_candidate_order[0].candidates[i + k].c;
+                        min_n_cut += std::min(m_cross_matrix.matrix[a * n + b], m_cross_matrix.matrix[b * n + a]);
+                    }
+                }
+
+                Graph temp_g(m_graph.n_A, vertex_group_size);
+                TranslationTable tt;
+                u32 new_vertex_b = 0;
+
+                for(u64 j = 0; j < vertex_group_size; ++j){
+                    u32 a = m_candidate_order[0].candidates[i + j].c;
+                    tt.add_B(a, new_vertex_b);
+                    for(auto &edge : m_graph.adj_list[a]){
+                        temp_g.add_edge(edge.vertex, new_vertex_b, edge.weight);
+                    }
+
+                    new_vertex_b += 1;
+                }
+                temp_g.finalize();
+                ExhaustiveSolver temp_solver(temp_g);
+                temp_solver.solve();
+                AlignedVector<u32> temp_sol = temp_solver.get_solution();
+                u32 n_best_cut = temp_g.determine_n_cuts(temp_sol);
+
+                std::cout << min_n_cut << " " << n_best_cut << std::endl;
+
+                svg.set_n_min_cuts(min_n_cut);
+                svg.set_n_best_cuts(n_best_cut);
+            }
+
+            // set pointers
+            for(auto &svg : m_vertex_groups){
+                for(u64 i = 0; i < svg.vertices.size(); ++i){
+                    m_vertex_to_group[svg.vertices[i]] = &svg.vertex_marked[i];
+                }
+            }
+        }
 
         /**
          * Executes Dynamic-Candidate-Ordering.
@@ -250,8 +314,11 @@ namespace CrossGuard {
          * @param depth Current depth of the algorithm.
          */
         inline bool execute_DCO(int depth) {
+            // new id for vertex groups
+            // m_vertex_group_id += 1;
+
             // get last added vertex
-            Candidate last_added_vertex = m_candidate_order[depth - 1].candidates[m_depth_info[depth - 1].counter];
+            Candidate &last_added_vertex = m_candidate_order[depth - 1].candidates[m_depth_info[depth - 1].counter];
 
             // determine the number of cuts between placed and still to be placed vertices
             u32 inter_cuts = 0;
@@ -262,7 +329,7 @@ namespace CrossGuard {
             u32 idx = 0;
             for (u32 i = 0; i < n - (depth - 1); ++i) {
                 // curr vertex
-                Candidate vertex = m_candidate_order[depth - 1].candidates[i];
+                Candidate &vertex = m_candidate_order[depth - 1].candidates[i];
 
                 u32 vertex_not_used = (1 - (vertex.c == last_added_vertex.c)); // 0 if vertex is used, 1 else
 
@@ -282,6 +349,10 @@ namespace CrossGuard {
                 m_candidate_order[depth].candidates[idx] = vertex;
                 m_candidate_order[depth].candidates[idx].gain += extra_gain;
 
+                // mark vertex in svg
+                // *m_vertex_to_group[vertex.c] = m_vertex_group_id * vertex_not_used;
+
+                // increase idx
                 idx += vertex_not_used;
             }
 
@@ -294,6 +365,24 @@ namespace CrossGuard {
             if (m_depth_info[depth].curr_cuts + m_depth_info[depth].min_intra_cuts + m_depth_info[depth].min_inter_cuts >= m_solution_n_cuts) {
                 return true;
             }
+
+            // more accurate cut with svg
+            /*
+            u64 sum_min_cuts = 0;
+            u64 sum_best_cuts = 0;
+            for(auto &svg : m_vertex_groups){
+                if(svg.all_marked(m_vertex_group_id)){
+                    sum_min_cuts += svg.n_min_cuts;
+                    sum_best_cuts += svg.n_best_cuts;
+                }
+            }
+
+            // check if we can abort based on the number of cuts remaining
+            if (m_depth_info[depth].curr_cuts + (m_depth_info[depth].min_intra_cuts + (sum_best_cuts - sum_min_cuts)) + m_depth_info[depth].min_inter_cuts >= m_solution_n_cuts) {
+                std::cout << "Accurate abort" << std::endl;
+                return true;
+            }
+             */
 
             return false;
         }
