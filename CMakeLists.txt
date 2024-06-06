@@ -38,7 +38,7 @@ add_executable(PACE2024Exact
         src/useless_reducer.h
         src/one_vertex_partitioner.h
         src/one_vertex_partition_manager.h
-        src/domination_reducer.h)
+        src/domination_reducer.h
         src/one_vertex_partition_manager.h
         src/solved_vertex_group.h)
 
@@ -73,7 +73,7 @@ add_executable(PACE2024Exact_test
         tests/own_one_vertex_partition.cpp
         src/one_vertex_partition_manager.h
         tests/own_solver_test.cpp
-        src/solved_vertex_group.h)
+        src/solved_vertex_group.h
         tests/own_solver_test.cpp
         src/domination_reducer.h
         tests/own_domination_reduction_test.cpp)
