@@ -8,7 +8,7 @@
 
 #define max_n_A 51
 #define max_n_B 11
-#define n_files 100
+#define n_files 110
 
 namespace CrossGuard {
 

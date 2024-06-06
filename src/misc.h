@@ -219,6 +219,8 @@ namespace CrossGuard {
 
     u64 hash(const AlignedVector<Edge> &vec);
 
+    bool is_contained(const AlignedVector<Edge>& smaller_vector, const AlignedVector<Edge>& larger_vector);
+
 }
 
 #endif //PACE2024EXACT_MISC_H

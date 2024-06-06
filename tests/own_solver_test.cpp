@@ -8,7 +8,7 @@
 
 #define max_n_A 51
 #define max_n_B 11
-#define n_files 100
+#define n_files 5
 #define max_n_par 11
 #define max_n_red 10
 

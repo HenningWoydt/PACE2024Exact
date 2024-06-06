@@ -78,4 +78,46 @@ namespace CrossGuard {
         return seed;
     }
 
+    bool is_contained(const AlignedVector<Edge>& smaller_vector, const AlignedVector<Edge>& larger_vector) {
+
+        for(Edge e1 : smaller_vector){
+            bool found = false;
+            for(Edge e2 : larger_vector){
+                if(e1.vertex == e2.vertex){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                return false;
+            }
+        }
+
+        return true;
+
+        u64 smaller_len = smaller_vector.size();
+        u64 larger_len = larger_vector.size();
+
+        u64 i = 0; // Pointer for smaller vector
+        u64 j = 0; // Pointer for larger vector
+
+        while (i < smaller_len && j < larger_len) {
+            if (smaller_vector[i] < larger_vector[j]) {
+                // If the element in smaller vector is smaller, move its pointer
+                i++;
+            } else if (smaller_vector[i] == larger_vector[j]) {
+                // If elements are equal, move both pointers
+                i++;
+                j++;
+            } else {
+                // If element in smaller vector is larger, it's not contained
+                return false;
+            }
+        }
+
+        // If all elements of smaller vector are found in larger vector
+        // then return true
+        return i == smaller_len;
+    }
+
 }

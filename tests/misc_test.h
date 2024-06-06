@@ -17,6 +17,7 @@
 #include "../src/solver.h"
 #include "../src/useless_reducer.h"
 #include "../src/front_back_reducer.h"
+#include "../src/domination_reducer.h"
 
 namespace CrossGuard {
 
@@ -27,6 +28,8 @@ namespace CrossGuard {
     void compare_one_vertex_partition(const std::string &g_path, const std::string &sol_path);
 
     void compare_reduction_twins(const std::string &g_path, const std::string &sol_path, int n_reduce);
+
+    void compare_domination_reduction(const std::string &g_path, const std::string &sol_path);
 
     void compare_front_back_reduction(const std::string &g_path, const std::string &sol_path);
 

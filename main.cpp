@@ -11,6 +11,7 @@
 #include "src/solver.h"
 #include "src/useless_reducer.h"
 #include "src/front_back_reducer.h"
+#include "src/domination_reducer.h"
 
 using namespace CrossGuard;
 
@@ -32,7 +33,7 @@ int main(int argc, char *argv[]) {
     // args = {"", "../data/exact-public/83.gr", "res.txt"};
     // args = {"", "../data/test/medium_test_set/22.gr", "res.txt"};
     // args = {"", "../data/test/own/reduction_twins/5/48_8/4.gr", "res.txt"};
-    args = {"", "../data/test/own/random/1_2/0.gr", "res.txt"};
+    args = {"", "../data/test/own/random/5_3/63.gr", "res.txt"};
     // args = {"", "../data/test/own/partition/2/2_2/0.gr", "res.txt"};
 
 
@@ -62,6 +63,29 @@ int main(int argc, char *argv[]) {
         u32 solver_n_cuts = g.determine_n_cuts(solver_solution);
         print(solver_solution);
         std::cout << solver_n_cuts << std::endl;
+    }
+
+    {
+        std::cout << "--- Domination ---" << std::endl;
+        Graph g(args[1]);
+        g.print();
+
+        DominationReducer dom_reducer(g);
+        Graph dom_reduced_g = dom_reducer.reduce();
+        dom_reduced_g.print();
+
+        // EXPECT_EQ(twin_reduced_g.n_B, n_reduce) << g_path << " " << sol_path;
+
+        ExhaustiveSolver s(dom_reduced_g);
+        s.solve();
+        AlignedVector<u32> exhaustive_sol = s.get_solution();
+
+        exhaustive_sol = dom_reducer.back_propagate(exhaustive_sol);
+        u32 domination_reduction_n_cuts = g.determine_n_cuts(exhaustive_sol);
+
+        print(exhaustive_sol);
+        std::cout << domination_reduction_n_cuts << std::endl;
+        exit(EXIT_SUCCESS);
     }
 
     {

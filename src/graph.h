@@ -177,13 +177,12 @@ namespace CrossGuard {
          * @param permutation The m_permutation.
          * @return Number of cuts.
          */
-        inline u32 determine_n_cuts(const AlignedVector<u32> &permutation) {
-            ASSERT((u32) permutation.size() == n_B);
+        inline u32 determine_n_cuts(const AlignedVector<u32> &permutation) const {
             ASSERT(no_duplicates(permutation));
 
             u32 n_cuts = 0;
-            for (u32 i = 0; i < n_B; ++i) {
-                for (u32 j = i + 1; j < n_B; ++j) {
+            for (u32 i = 0; i < permutation.size(); ++i) {
+                for (u32 j = i + 1; j < permutation.size(); ++j) {
                     u32 b1 = permutation[i];
                     u32 b2 = permutation[j];
 

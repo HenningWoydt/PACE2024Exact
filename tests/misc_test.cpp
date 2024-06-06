@@ -171,6 +171,46 @@ namespace CrossGuard {
         EXPECT_EQ(twin_reduction_n_cuts, bf_n_cuts) << g_path << " " << sol_path << " " << to_string(twin_reduction_solution) << " " << to_string(bf_solution);
     }
 
+    void compare_domination_reduction(const std::string &g_path, const std::string &sol_path) {
+        AlignedVector<u32> bf_solution;
+        AlignedVector<u32> domination_reduction_solution;
+
+        u32 bf_n_cuts;
+        u32 domination_reduction_n_cuts;
+
+        {
+            Graph g(g_path);
+            if (file_exists(sol_path)) {
+                bf_solution = read_solution(sol_path, g.n_A + 1);
+            } else {
+                Solver_BF solver_bf(g);
+                solver_bf.solve();
+                bf_solution = solver_bf.get_solution();
+                AlignedVector<u32> shifted_solution = solver_bf.get_shifted_solution();
+                write_solution(shifted_solution, sol_path);
+            }
+            bf_n_cuts = g.determine_n_cuts(bf_solution);
+        }
+
+        {
+            Graph g(g_path);
+
+            DominationReducer dom_reducer(g);
+            Graph dom_reduced_g = dom_reducer.reduce();
+
+            // EXPECT_EQ(twin_reduced_g.n_B, n_reduce) << g_path << " " << sol_path;
+
+            ExhaustiveSolver s(dom_reduced_g);
+            s.solve();
+            AlignedVector<u32> exhaustive_sol = s.get_solution();
+
+            domination_reduction_solution = dom_reducer.back_propagate(exhaustive_sol);
+            domination_reduction_n_cuts = g.determine_n_cuts(domination_reduction_solution);
+        }
+
+        EXPECT_EQ(domination_reduction_n_cuts, bf_n_cuts) << g_path << " " << sol_path << " " << to_string(domination_reduction_solution) << " " << to_string(bf_solution);
+    }
+
     void compare_front_back_reduction(const std::string &g_path, const std::string &sol_path) {
         AlignedVector<u32> bf_solution;
         AlignedVector<u32> fb_reduction_solution;
