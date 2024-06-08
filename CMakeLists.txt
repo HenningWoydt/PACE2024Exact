@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.22)
 project(PACE2024Exact)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -33,7 +33,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -DNDEBUG -finline-functions -flto -f
 # set(CMAKE_CXX_FLAGS_RELEASE "-std=c++20 -O3 -march=native -Wall -Wextra -pedantic")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -std=c++20 -Wall -Wextra -pedantic")
 
-add_executable(PACE2024Exact
+add_executable(crossingguard
         main.cpp
         src/macros.h
         src/definitions.h
@@ -59,7 +59,7 @@ add_executable(PACE2024Exact
         src/one_vertex_partition_manager.h
         src/solved_vertex_group.h)
 
-add_executable(PACE2024Exact_test
+add_executable(crossingguard_GTest
         src/macros.h
         src/definitions.h
         src/misc.cpp
@@ -95,6 +95,8 @@ add_executable(PACE2024Exact_test
         src/domination_reducer.h
         tests/own_domination_reduction_test.cpp)
 
-target_link_libraries(PACE2024Exact_test GTest::gtest_main)
+target_link_libraries(crossingguard -static)
+
+target_link_libraries(crossingguard_GTest GTest::gtest_main -static)
 include(GoogleTest)
-gtest_discover_tests(PACE2024Exact_test)
+gtest_discover_tests(crossingguard_GTest)

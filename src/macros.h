@@ -21,7 +21,7 @@
 
 namespace CrossGuard {
 
-#define ASSERT_ENABLED 1
+#define ASSERT_ENABLED 0
 
 #if ASSERT_ENABLED
 #define ASSERT(condition) if(!(condition)) {std::cerr << "Error in file " << __FILE__ << " in function " << __FUNCTION__ << " at line " << __LINE__ << "!" << std::endl; abort(); } ((void)0)

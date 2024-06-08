@@ -57,12 +57,14 @@ namespace CrossGuard {
          * @param file_path Path to the file.
          */
         explicit Graph(const std::string &file_path) {
-            std::ios_base::sync_with_stdio(false);
-            std::ifstream file(file_path);
+            std::ifstream f;
+            if (file_exists(file_path)) {
+                f.open(file_path);
+            }
+            std::istream &in = file_exists(file_path) ? f : std::cin;
 
             std::string line(64, ' ');
-            if (file.is_open()) {
-                while (std::getline(file, line)) {
+                while (std::getline(in, line)) {
                     if (line[0] == 'c') { continue; }
                     if (line.back() == '\n' || line.back() == '\r') { line.pop_back(); }
 
@@ -97,7 +99,7 @@ namespace CrossGuard {
                     break;
                 }
 
-                while (std::getline(file, line)) {
+                while (std::getline(in, line)) {
                     if (line[0] == 'c') { continue; }
                     if (line.back() == '\n' || line.back() == '\r') { line.pop_back(); }
 
@@ -121,13 +123,9 @@ namespace CrossGuard {
                     b -= (n_A + 1);
                     add_edge(a, b, 1);
                 }
-                file.close();
 
                 // sort each neighborhood
                 finalize();
-            } else {
-                std::cout << "Could not open file " << file_path << " !" << std::endl;
-            }
         }
 
         /**

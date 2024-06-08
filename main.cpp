@@ -47,6 +47,16 @@ std::string convert(AlignedVector<int> &vec) {
 int main(int argc, char *argv[]) {
     AlignedVector<std::string> args(argv, argv + argc);
 
+    // std::cerr << "args" << std::endl;
+    // for(auto arg : args){
+    //     std::cerr << arg << " " << std::endl;
+    // }
+
+    // std::cerr << "cin" << std::endl;
+    // for (std::string line; std::getline(std::cin, line);) {
+    //     std::cerr << line << std::endl;
+    // }
+
     // args = {"", "../data/exact-public/83.gr", "res.txt"};
     // args = {"", "../data/test/medium_test_set/22.gr", "res.txt"};
     // args = {"", "../data/test/own/reduction_twins/5/48_8/4.gr", "res.txt"};
@@ -55,16 +65,28 @@ int main(int argc, char *argv[]) {
 
 
     {
-        Graph g(args[1]);
+        std::string file_path = args.size() >= 2 ? args[1] : "";
+        Graph g(file_path);
+        g.finalize();
         Solver s(g);
-        s.solve(true);
+        s.solve(false);
         AlignedVector<u32> solver_solution = s.get_shifted_solution();
 
-        std::ofstream out(args[2]);
-        for(u32 x : solver_solution){
-            out << x << "\n";
+        std::ofstream file_out;
+        if(args.size() >= 3){
+            file_out.open(args[2]);
         }
-        out.close();
+        std::ostream &out = file_out.is_open() ? file_out : std::cout;
+
+        std::string sol;
+        for(u32 x : solver_solution){
+            sol += std::to_string(x) += "\n";
+        }
+        sol.pop_back();
+        // std::cerr << sol << std::endl;
+        out << sol << std::flush;
+
+        // abort();
 
         exit(EXIT_SUCCESS);
     }
