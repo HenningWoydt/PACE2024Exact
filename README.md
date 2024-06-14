@@ -1,7 +1,7 @@
 # Crossing-Guard: Keeping Edges in Line
 
 ## Install
-use `./build.sh` to build `crossingguard` in `build`. No additional libraries are required.
+use `./build.sh` to build `crossingguard` in `build`. The `Boost` library is also required.
 
 ## Usage
 Use `crossingguard file-in file-out` to solve one problem. The `file-in` should be in the `.gr` format.
